@@ -1,0 +1,23 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-3">
+    <div class="container-fluid">
+        <button class="btn btn-outline-secondary me-3" id="toggleSidebar">
+            <i class="fa fa-bars"></i>
+        </button>
+        <form class="d-flex">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        </form>
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-user-circle me-1"></i> {{ request.user.username }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>

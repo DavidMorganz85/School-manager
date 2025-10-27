@@ -1,0 +1,536 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Event Management - School Manager{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Event Management</h1>
+        <p class="text-gray-600">Plan, organize, and manage school events and activities</p>
+      </div>
+      <div class="mt-4 sm:mt-0 flex space-x-3">
+        <button onclick="viewCalendar()" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+          <i class="fas fa-calendar-alt mr-2"></i>
+          Calendar View
+        </button>
+        <button onclick="createEvent()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+          <i class="fas fa-plus mr-2"></i>
+          Create Event
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Event Stats -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-calendar text-white"></i>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Upcoming Events</dt>
+            <dd class="text-3xl font-bold text-gray-900">{{ upcoming_events }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-check-circle text-white"></i>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Completed Events</dt>
+            <dd class="text-3xl font-bold text-gray-900">{{ completed_events }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-users text-white"></i>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Total Attendees</dt>
+            <dd class="text-3xl font-bold text-gray-900">{{ total_attendees }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-star text-white"></i>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">This Month</dt>
+            <dd class="text-3xl font-bold text-gray-900">{{ this_month_events }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <button onclick="viewMyEvents()" class="flex items-center justify-center p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200">
+    <i class="fas fa-user text-blue-600 text-2xl mr-3"></i>
+    <span class="text-sm font-medium text-blue-900">My Events</span>
+  </button>
+  <button onclick="viewInvitations()" class="flex items-center justify-center p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors duration-200">
+    <i class="fas fa-envelope text-green-600 text-2xl mr-3"></i>
+    <span class="text-sm font-medium text-green-900">Invitations</span>
+  </button>
+  <button onclick="viewReports()" class="flex items-center justify-center p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors duration-200">
+    <i class="fas fa-chart-bar text-purple-600 text-2xl mr-3"></i>
+    <span class="text-sm font-medium text-purple-900">Event Reports</span>
+  </button>
+  <button onclick="manageVenues()" class="flex items-center justify-center p-4 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors duration-200">
+    <i class="fas fa-map-marker-alt text-yellow-600 text-2xl mr-3"></i>
+    <span class="text-sm font-medium text-yellow-900">Manage Venues</span>
+  </button>
+</div>
+
+<!-- Filters -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+  <div class="p-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+        <input type="text" id="eventSearch" placeholder="Search events..." class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Event Type</label>
+        <select id="typeFilter" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500">
+          <option value="">All Types</option>
+          <option value="academic">Academic</option>
+          <option value="sports">Sports</option>
+          <option value="cultural">Cultural</option>
+          <option value="social">Social</option>
+          <option value="meeting">Meeting</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+        <select id="statusFilter" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500">
+          <option value="">All Status</option>
+          <option value="upcoming">Upcoming</option>
+          <option value="ongoing">Ongoing</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+        <input type="date" id="dateFilter" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500">
+      </div>
+    </div>
+    <div class="mt-4 flex justify-end">
+      <button onclick="applyFilters()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700">
+        <i class="fas fa-search mr-2"></i>
+        Apply Filters
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Events List -->
+<div class="space-y-6" id="eventsList">
+  {% for event in events %}
+  <div class="event-card bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
+    <div class="p-6">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+        <div class="flex-1">
+          <div class="flex items-start space-x-4">
+            <!-- Event Date -->
+            <div class="flex-shrink-0">
+              <div class="w-16 h-16 bg-primary-100 rounded-lg flex flex-col items-center justify-center">
+                <span class="text-sm font-medium text-primary-900">{{ event.date|date:"M" }}</span>
+                <span class="text-lg font-bold text-primary-900">{{ event.date|date:"d" }}</span>
+                <span class="text-xs text-primary-600">{{ event.date|date:"Y" }}</span>
+              </div>
+            </div>
+            
+            <!-- Event Details -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center space-x-2 mb-2">
+                <h3 class="text-lg font-semibold text-gray-900">{{ event.title }}</h3>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                  {% if event.status == 'upcoming' %}bg-blue-100 text-blue-800
+                  {% elif event.status == 'ongoing' %}bg-yellow-100 text-yellow-800
+                  {% elif event.status == 'completed' %}bg-green-100 text-green-800
+                  {% else %}bg-red-100 text-red-800{% endif %}">
+                  {{ event.status|title }}
+                </span>
+              </div>
+              
+              <p class="text-sm text-gray-600 mb-2">{{ event.description|truncatechars:150 }}</p>
+              
+              <div class="flex items-center space-x-4 text-sm text-gray-500">
+                <div class="flex items-center">
+                  <i class="fas fa-clock mr-1"></i>
+                  {{ event.start_time|time:"H:i" }} - {{ event.end_time|time:"H:i" }}
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-map-marker-alt mr-1"></i>
+                  {{ event.venue }}
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-users mr-1"></i>
+                  {{ event.attendees_count }} attendees
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-tag mr-1"></i>
+                  {{ event.event_type|title }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Event Actions -->
+        <div class="mt-4 lg:mt-0 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+          {% if event.status == 'upcoming' %}
+            <button onclick="rsvpEvent({{ event.id }})" class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700">
+              <i class="fas fa-check mr-1"></i>
+              RSVP
+            </button>
+          {% endif %}
+          
+          <button onclick="viewEvent({{ event.id }})" class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            <i class="fas fa-eye mr-1"></i>
+            View
+          </button>
+          
+          {% if user.is_staff %}
+          <button onclick="editEvent({{ event.id }})" class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            <i class="fas fa-edit mr-1"></i>
+            Edit
+          </button>
+          
+          <button onclick="deleteEvent({{ event.id }})" class="inline-flex items-center px-3 py-2 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50">
+            <i class="fas fa-trash mr-1"></i>
+            Delete
+          </button>
+          {% endif %}
+        </div>
+      </div>
+      
+      <!-- Event Progress (for ongoing events) -->
+      {% if event.status == 'ongoing' %}
+      <div class="mt-4">
+        <div class="flex items-center justify-between text-sm text-gray-600 mb-1">
+          <span>Event Progress</span>
+          <span>{{ event.progress }}%</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2">
+          <div class="bg-primary-600 h-2 rounded-full" style="width: {{ event.progress }}%"></div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% empty %}
+  <div class="text-center py-12">
+    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <i class="fas fa-calendar text-gray-400 text-2xl"></i>
+    </div>
+    <h3 class="text-lg font-medium text-gray-900 mb-2">No events found</h3>
+    <p class="text-gray-500">Create your first event or adjust your search criteria.</p>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Create Event Modal -->
+<div id="createEventModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+  <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+    <div class="mt-3">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-medium text-gray-900">Create New Event</h3>
+        <button onclick="closeCreateEventModal()" class="text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <form id="createEventForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Event Title</label>
+          <input type="text" id="eventTitle" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Description</label>
+          <textarea id="eventDescription" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"></textarea>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Event Type</label>
+            <select id="eventType" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+              <option value="">Select Type</option>
+              <option value="academic">Academic</option>
+              <option value="sports">Sports</option>
+              <option value="cultural">Cultural</option>
+              <option value="social">Social</option>
+              <option value="meeting">Meeting</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Venue</label>
+            <input type="text" id="eventVenue" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Date</label>
+            <input type="date" id="eventDate" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Time</label>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="time" id="startTime" class="border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+              <input type="time" id="endTime" class="border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+            </div>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Max Attendees</label>
+            <input type="number" id="maxAttendees" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Registration Required</label>
+            <select id="registrationRequired" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Target Audience</label>
+          <div class="mt-2 space-y-2">
+            <label class="inline-flex items-center">
+              <input type="checkbox" class="form-checkbox" value="students">
+              <span class="ml-2 text-sm text-gray-700">Students</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input type="checkbox" class="form-checkbox" value="teachers">
+              <span class="ml-2 text-sm text-gray-700">Teachers</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input type="checkbox" class="form-checkbox" value="parents">
+              <span class="ml-2 text-sm text-gray-700">Parents</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input type="checkbox" class="form-checkbox" value="staff">
+              <span class="ml-2 text-sm text-gray-700">Staff</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" onclick="closeCreateEventModal()" class="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700">
+            Create Event
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- RSVP Modal -->
+<div id="rsvpModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+  <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div class="mt-3">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-medium text-gray-900">RSVP to Event</h3>
+        <button onclick="closeRsvpModal()" class="text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <form id="rsvpForm" class="space-y-4">
+        <input type="hidden" id="eventId" name="event_id">
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Response</label>
+          <select id="rsvpResponse" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+            <option value="">Select Response</option>
+            <option value="yes">Yes, I'll attend</option>
+            <option value="no">No, I can't attend</option>
+            <option value="maybe">Maybe</option>
+          </select>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Number of Guests</label>
+          <input type="number" id="guestCount" min="0" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Comments</label>
+          <textarea id="rsvpComments" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"></textarea>
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" onclick="closeRsvpModal()" class="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700">
+            Submit RSVP
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+function createEvent() {
+  document.getElementById('createEventModal').classList.remove('hidden');
+}
+
+function closeCreateEventModal() {
+  document.getElementById('createEventModal').classList.add('hidden');
+  document.getElementById('createEventForm').reset();
+}
+
+function rsvpEvent(eventId) {
+  document.getElementById('eventId').value = eventId;
+  document.getElementById('rsvpModal').classList.remove('hidden');
+}
+
+function closeRsvpModal() {
+  document.getElementById('rsvpModal').classList.add('hidden');
+  document.getElementById('rsvpForm').reset();
+}
+
+function viewEvent(eventId) {
+  // In a real implementation, this would open event details
+  alert('View event details for ID: ' + eventId);
+}
+
+function editEvent(eventId) {
+  // In a real implementation, this would open edit form
+  alert('Edit event for ID: ' + eventId);
+}
+
+function deleteEvent(eventId) {
+  if (confirm('Are you sure you want to delete this event?')) {
+    // In a real implementation, this would delete the event
+    alert('Event deleted successfully!');
+  }
+}
+
+function viewCalendar() {
+  // In a real implementation, this would show calendar view
+  alert('Calendar view');
+}
+
+function viewMyEvents() {
+  // In a real implementation, this would show user's events
+  alert('My events');
+}
+
+function viewInvitations() {
+  // In a real implementation, this would show invitations
+  alert('Event invitations');
+}
+
+function viewReports() {
+  // In a real implementation, this would show event reports
+  alert('Event reports');
+}
+
+function manageVenues() {
+  // In a real implementation, this would manage venues
+  alert('Manage venues');
+}
+
+function applyFilters() {
+  // In a real implementation, this would filter events
+  console.log('Applying filters...');
+}
+
+// Form submissions
+document.getElementById('createEventForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  // In a real implementation, this would create the event
+  const formData = new FormData(this);
+  console.log('Creating event:', Object.fromEntries(formData));
+  
+  closeCreateEventModal();
+  alert('Event created successfully!');
+});
+
+document.getElementById('rsvpForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  // In a real implementation, this would submit RSVP
+  const formData = new FormData(this);
+  console.log('Submitting RSVP:', Object.fromEntries(formData));
+  
+  closeRsvpModal();
+  alert('RSVP submitted successfully!');
+});
+
+// Close modals when clicking outside
+document.getElementById('createEventModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeCreateEventModal();
+  }
+});
+
+document.getElementById('rsvpModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeRsvpModal();
+  }
+});
+
+// Set default values
+document.getElementById('eventDate').valueAsDate = new Date();
+document.getElementById('startTime').value = '09:00';
+document.getElementById('endTime').value = '17:00';
+</script>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'school/base.html' %}
+
+{% block content %}
+<h1>Admin Dashboard</h1>
+<div class="row">
+  <div class="col-md-3">
+    <div class="card p-3">
+      <h5>Students</h5>
+      <div class="display-6">{{ students_count }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3">
+      <h5>Teachers</h5>
+      <div class="display-6">{{ teachers_count }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3">
+      <h5>Attendance Today</h5>
+      <div class="display-6">{{ attendance_today }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3">
+      <h5>Upcoming Exams</h5>
+      <div class="display-6">{{ upcoming_exams }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="card mt-4 p-3">
+  <h5>Attendance (last 7 days)</h5>
+  <canvas id="attendanceChart" height="100"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+fetch('{% url "school:summary_chart_data" %}')
+  .then(r => r.json())
+  .then(payload => {
+    const ctx = document.getElementById('attendanceChart');
+    new Chart(ctx, {
+      type: 'line',
+      data: { labels: payload.labels, datasets: [{ label: 'Attendance', data: payload.data, fill: true, borderColor: 'rgba(75,192,192,1)' }] },
+    });
+  });
+</script>
+{% endblock %}

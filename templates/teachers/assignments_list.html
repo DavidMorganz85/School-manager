@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+  <div class="flex justify-between items-center mb-4">
+    <h1 class="text-2xl font-semibold">Your Assignments</h1>
+    <a href="{% url 'teachers:create_assignment' %}" class="btn btn-primary">Create Assignment</a>
+  </div>
+
+  {% if assignments %}
+    <div class="grid gap-4">
+      {% for a in assignments %}
+        <div class="p-4 border rounded shadow-sm bg-white">
+          <div class="flex justify-between items-start">
+            <div>
+              <h2 class="text-lg font-medium">{{ a.title }}</h2>
+              <p class="text-sm text-gray-600">Class: {{ a.school_class }} — Subject: {{ a.subject }}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm">Due: {{ a.due_date }}</p>
+              <a href="{% url 'teachers:assignment_submissions' a.id %}" class="text-sm text-indigo-600">View Submissions</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No assignments yet. Create one to get started.</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Assignments{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <h2 class="text-2xl font-bold mb-4">Assignments</h2>
+  {% if assignments %}
+    <ul class="space-y-4">
+      {% for a in assignments %}
+      <li class="bg-white p-4 rounded shadow">
+        <div class="flex justify-between items-start">
+          <div>
+            <a href="{% url 'students:assignment_detail' a.pk %}" class="text-lg font-semibold text-indigo-600">{{ a.title }}</a>
+            <p class="text-sm text-gray-600 mt-1">Due: {{ a.due_date }}</p>
+            <p class="mt-2 text-sm text-gray-700">{{ a.description|truncatechars:180 }}</p>
+          </div>
+          <div class="text-sm text-right">
+            <div class="text-gray-500">Total: {{ a.total_marks }}</div>
+            <div class="mt-2"><a href="{% url 'students:assignment_detail' a.pk %}" class="text-indigo-600">Open</a></div>
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-gray-500">No assignments found.</p>
+  {% endif %}
+</div>
+{% endblock %}

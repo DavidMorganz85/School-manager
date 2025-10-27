@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Students in {{ school_class.name }}{% endblock %}
+{% block content %}
+<div class="card p-3">
+  <h3>Students in {{ school_class.name }}</h3>
+  <a href="{% url 'classes:assign_students' school_class.pk %}" class="btn btn-primary mb-3">Assign Students</a>
+  <a href="{% url 'classes:export_csv' school_class.pk %}" class="btn btn-secondary mb-3">Export CSV</a>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Admission</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in students %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ s.user.get_full_name }}</td>
+        <td>{{ s.pk }}</td>
+        <td>
+          <a href="#" class="btn btn-sm btn-primary">View</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4">No students assigned.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

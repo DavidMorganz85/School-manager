@@ -1,0 +1,15 @@
+{% extends 'school/base.html' %}
+
+{% block title %}Teachers - School Manager{% endblock %}
+
+{% block content %}
+  <h2>Teachers</h2>
+  <ul>
+    {% for t in teachers %}
+      <li><a href="{% url 'school:teacher_detail' t.pk %}">{{ t }}</a></li>
+    {% empty %}
+      <li>No teachers yet.</li>
+    {% endfor %}
+  </ul>
+  <p><a href="{% url 'school:teacher_create' %}">Add a new teacher</a></p>
+{% endblock %}

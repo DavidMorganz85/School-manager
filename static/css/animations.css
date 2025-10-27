@@ -1,0 +1,38 @@
+/* Component-specific animations and decorative helpers */
+.hero-overlay-decor {
+  position: absolute;
+  right: -40px;
+  top: -20px;
+  width: 220px;
+  height: 220px;
+  pointer-events: none;
+  opacity: 0.9;
+  filter: drop-shadow(0 12px 30px rgba(2,6,23,0.12));
+  transform: rotate(8deg);
+  transition: transform 600ms ease, opacity 400ms ease;
+}
+.hero-tilt {
+  transform: perspective(800px) rotateX(0deg) rotateY(0deg);
+  transition: transform 450ms cubic-bezier(.2,.9,.2,1);
+}
+
+/* subtle pulse for CTAs */
+@keyframes pulse-soft {
+  0% { box-shadow: 0 0 0 0 rgba(59,130,246,0.18); }
+  70% { box-shadow: 0 0 0 10px rgba(59,130,246,0); }
+  100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); }
+}
+.cta-pulse {
+  animation: pulse-soft 2.6s infinite;
+}
+
+/* Decorative entrance */
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.reveal-stagger.in-view > * {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 480ms ease, transform 480ms ease;
+}

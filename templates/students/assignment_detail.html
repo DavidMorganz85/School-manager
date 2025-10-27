@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}{{ assignment.title }}{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+  <h2 class="text-2xl font-bold">{{ assignment.title }}</h2>
+  <p class="text-sm text-gray-600">Class: {{ assignment.school_class }} &middot; Subject: {{ assignment.subject }}</p>
+  <p class="mt-4">{{ assignment.description }}</p>
+  {% if assignment.attachment %}
+    <p class="mt-2"><a href="{{ assignment.attachment.url }}" class="text-indigo-600">Download attachment</a></p>
+  {% endif %}
+
+  <div class="mt-6 bg-white p-4 rounded shadow">
+    <h3 class="font-semibold">Your submission</h3>
+    {% if submission %}
+      <p class="text-sm text-gray-700">Submitted at: {{ submission.submitted_at }}</p>
+      {% if submission.file %}
+        <p class="mt-2"><a href="{{ submission.file.url }}" class="text-indigo-600">Download submission</a></p>
+      {% endif %}
+      <p class="mt-2 text-sm">Marks: {{ submission.marks_obtained }} Feedback: {{ submission.feedback }}</p>
+    {% else %}
+      <p class="text-sm text-gray-500">You have not submitted yet.</p>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="mt-4">
+      {% csrf_token %}
+      <label class="block text-sm font-medium text-gray-700">Upload file</label>
+      <input type="file" name="submission_file" class="mt-2" />
+      <div class="mt-4">
+        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Promote Students from {{ school_class.name }}{% endblock %}
+{% block content %}
+<div class="card p-3 max-w-2xl">
+  <h3>Promote Students from {{ school_class.name }}</h3>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div>
+      {{ form.students.label_tag }}
+      {{ form.students }}
+    </div>
+    <div>
+      {{ form.target_class.label_tag }}
+      {{ form.target_class }}
+    </div>
+    <div class="mt-3">
+      <button class="btn btn-primary">Promote</button>
+      <a href="{% url 'classes:detail' school_class.pk %}" class="btn">Back</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

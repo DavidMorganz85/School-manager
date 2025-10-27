@@ -1,0 +1,447 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AI Analytics & Insights - School Manager{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">AI Analytics & Insights</h1>
+        <p class="text-gray-600">Advanced analytics powered by artificial intelligence for data-driven decisions</p>
+      </div>
+      <div class="mt-4 sm:mt-0 flex space-x-3">
+        <button onclick="generateInsights()" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+          <i class="fas fa-brain mr-2"></i>
+          Generate Insights
+        </button>
+        <button onclick="exportAnalytics()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+          <i class="fas fa-download mr-2"></i>
+          Export Analytics
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI Insights Overview -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-chart-line text-white"></i>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Performance Score</dt>
+            <dd class="text-3xl font-bold text-gray-900">87.5</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-lightbulb text-white"></i>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">AI Recommendations</dt>
+            <dd class="text-3xl font-bold text-gray-900">12</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-exclamation-triangle text-white"></i>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Risk Alerts</dt>
+            <dd class="text-3xl font-bold text-gray-900">3</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-trending-up text-white"></i>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Growth Trends</dt>
+            <dd class="text-3xl font-bold text-gray-900">+15%</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI Insights Cards -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+  <!-- Performance Predictions -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">Performance Predictions</h3>
+    </div>
+    <div class="p-6">
+      <div class="space-y-4">
+        <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+              <i class="fas fa-arrow-up text-white"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium text-gray-900">Grade 10A Performance</h4>
+              <p class="text-xs text-gray-600">Predicted to improve by 12% next term</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-lg font-bold text-green-600">+12%</span>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-between p-4 bg-yellow-50 rounded-lg">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center">
+              <i class="fas fa-minus text-white"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium text-gray-900">Grade 9B Attendance</h4>
+              <p class="text-xs text-gray-600">May decrease by 5% if no action taken</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-lg font-bold text-yellow-600">-5%</span>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+              <i class="fas fa-chart-line text-white"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium text-gray-900">Overall School Performance</h4>
+              <p class="text-xs text-gray-600">Expected to maintain current levels</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-lg font-bold text-blue-600">Stable</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Risk Analysis -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">Risk Analysis</h3>
+    </div>
+    <div class="p-6">
+      <div class="space-y-4">
+        <div class="flex items-center justify-between p-4 bg-red-50 rounded-lg">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
+              <i class="fas fa-exclamation-triangle text-white"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium text-gray-900">High Risk: Student Dropout</h4>
+              <p class="text-xs text-gray-600">3 students at risk of dropping out</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+              High
+            </span>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-between p-4 bg-yellow-50 rounded-lg">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center">
+              <i class="fas fa-exclamation-circle text-white"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium text-gray-900">Medium Risk: Attendance</h4>
+              <p class="text-xs text-gray-600">5 students with declining attendance</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+              Medium
+            </span>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+              <i class="fas fa-check-circle text-white"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium text-gray-900">Low Risk: Academic Performance</h4>
+              <p class="text-xs text-gray-600">Most students performing well</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              Low
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI Recommendations -->
+<div class="bg-white shadow-sm border border-gray-200 rounded-lg mb-8">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <h3 class="text-lg font-medium text-gray-900">AI Recommendations</h3>
+  </div>
+  <div class="p-6">
+    <div class="space-y-4">
+      <div class="flex items-start space-x-4 p-4 bg-blue-50 rounded-lg">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+            <i class="fas fa-lightbulb text-white"></i>
+          </div>
+        </div>
+        <div class="flex-1">
+          <h4 class="text-sm font-medium text-gray-900">Optimize Class Schedules</h4>
+          <p class="text-sm text-gray-600 mt-1">AI analysis suggests rearranging Grade 10A's mathematics class to 10:00 AM for better performance. Students show 15% better focus during this time slot.</p>
+          <div class="mt-3 flex space-x-2">
+            <button onclick="implementRecommendation(1)" class="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+              Implement
+            </button>
+            <button onclick="dismissRecommendation(1)" class="inline-flex items-center px-3 py-1 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+              Dismiss
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex items-start space-x-4 p-4 bg-green-50 rounded-lg">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+            <i class="fas fa-users text-white"></i>
+          </div>
+        </div>
+        <div class="flex-1">
+          <h4 class="text-sm font-medium text-gray-900">Intervention for At-Risk Students</h4>
+          <p class="text-sm text-gray-600 mt-1">3 students in Grade 9B show signs of academic struggle. Recommend assigning a mentor teacher and scheduling parent meetings.</p>
+          <div class="mt-3 flex space-x-2">
+            <button onclick="implementRecommendation(2)" class="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+              Implement
+            </button>
+            <button onclick="dismissRecommendation(2)" class="inline-flex items-center px-3 py-1 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+              Dismiss
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex items-start space-x-4 p-4 bg-purple-50 rounded-lg">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+            <i class="fas fa-chart-bar text-white"></i>
+          </div>
+        </div>
+        <div class="flex-1">
+          <h4 class="text-sm font-medium text-gray-900">Resource Allocation Optimization</h4>
+          <p class="text-sm text-gray-600 mt-1">AI suggests reallocating library resources to support Grade 11 students who show high engagement with digital learning materials.</p>
+          <div class="mt-3 flex space-x-2">
+            <button onclick="implementRecommendation(3)" class="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700">
+              Implement
+            </button>
+            <button onclick="dismissRecommendation(3)" class="inline-flex items-center px-3 py-1 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+              Dismiss
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Advanced Analytics -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+  <!-- Learning Pattern Analysis -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">Learning Pattern Analysis</h3>
+    </div>
+    <div class="p-6">
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-gray-600">Visual Learners</span>
+          <div class="flex items-center space-x-2">
+            <div class="w-32 bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-600 h-2 rounded-full" style="width: 65%"></div>
+            </div>
+            <span class="text-sm font-medium text-gray-900">65%</span>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-gray-600">Auditory Learners</span>
+          <div class="flex items-center space-x-2">
+            <div class="w-32 bg-gray-200 rounded-full h-2">
+              <div class="bg-green-600 h-2 rounded-full" style="width: 45%"></div>
+            </div>
+            <span class="text-sm font-medium text-gray-900">45%</span>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-gray-600">Kinesthetic Learners</span>
+          <div class="flex items-center space-x-2">
+            <div class="w-32 bg-gray-200 rounded-full h-2">
+              <div class="bg-purple-600 h-2 rounded-full" style="width: 30%"></div>
+            </div>
+            <span class="text-sm font-medium text-gray-900">30%</span>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-gray-600">Reading/Writing Learners</span>
+          <div class="flex items-center space-x-2">
+            <div class="w-32 bg-gray-200 rounded-full h-2">
+              <div class="bg-yellow-600 h-2 rounded-full" style="width: 55%"></div>
+            </div>
+            <span class="text-sm font-medium text-gray-900">55%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Engagement Metrics -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">Engagement Metrics</h3>
+    </div>
+    <div class="p-6">
+      <div class="space-y-4">
+        <div class="text-center">
+          <div class="text-3xl font-bold text-gray-900 mb-2">78%</div>
+          <div class="text-sm text-gray-600">Overall Engagement</div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div class="text-center p-3 bg-blue-50 rounded-lg">
+            <div class="text-xl font-bold text-blue-600">85%</div>
+            <div class="text-xs text-gray-600">Class Participation</div>
+          </div>
+          <div class="text-center p-3 bg-green-50 rounded-lg">
+            <div class="text-xl font-bold text-green-600">72%</div>
+            <div class="text-xs text-gray-600">Homework Completion</div>
+          </div>
+          <div class="text-center p-3 bg-purple-50 rounded-lg">
+            <div class="text-xl font-bold text-purple-600">68%</div>
+            <div class="text-xs text-gray-600">Digital Engagement</div>
+          </div>
+          <div class="text-center p-3 bg-yellow-50 rounded-lg">
+            <div class="text-xl font-bold text-yellow-600">91%</div>
+            <div class="text-xs text-gray-600">Attendance Rate</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Predictive Analytics -->
+<div class="bg-white shadow-sm border border-gray-200 rounded-lg">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <h3 class="text-lg font-medium text-gray-900">Predictive Analytics</h3>
+  </div>
+  <div class="p-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="text-center p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
+        <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-graduation-cap text-white text-2xl"></i>
+        </div>
+        <h4 class="text-lg font-semibold text-gray-900 mb-2">Graduation Predictions</h4>
+        <p class="text-sm text-gray-600 mb-3">AI predicts 94% graduation rate for current cohort</p>
+        <div class="text-2xl font-bold text-blue-600">94%</div>
+      </div>
+      
+      <div class="text-center p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-lg">
+        <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-university text-white text-2xl"></i>
+        </div>
+        <h4 class="text-lg font-semibold text-gray-900 mb-2">College Readiness</h4>
+        <p class="text-sm text-gray-600 mb-3">87% of students predicted to be college-ready</p>
+        <div class="text-2xl font-bold text-green-600">87%</div>
+      </div>
+      
+      <div class="text-center p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg">
+        <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-trophy text-white text-2xl"></i>
+        </div>
+        <h4 class="text-lg font-semibold text-gray-900 mb-2">Academic Excellence</h4>
+        <p class="text-sm text-gray-600 mb-3">72% predicted to achieve honors status</p>
+        <div class="text-2xl font-bold text-purple-600">72%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+function generateInsights() {
+  // In a real implementation, this would trigger AI analysis
+  alert('Generating AI insights... This may take a few minutes.');
+}
+
+function exportAnalytics() {
+  // In a real implementation, this would export analytics data
+  alert('Exporting analytics data...');
+}
+
+function implementRecommendation(recommendationId) {
+  // In a real implementation, this would implement the recommendation
+  alert('Implementing recommendation ' + recommendationId + '...');
+}
+
+function dismissRecommendation(recommendationId) {
+  if (confirm('Are you sure you want to dismiss this recommendation?')) {
+    // In a real implementation, this would dismiss the recommendation
+    alert('Recommendation ' + recommendationId + ' dismissed.');
+  }
+}
+
+// Simulate real-time updates
+setInterval(function() {
+  // In a real implementation, this would update AI insights in real-time
+  console.log('Updating AI insights...');
+}, 30000); // Update every 30 seconds
+</script>
+{% endblock %}

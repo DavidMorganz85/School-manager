@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+  <div class="flex justify-between items-center mb-4">
+    <h1 class="text-2xl font-semibold">Submissions for: {{ assignment.title }}</h1>
+    <a href="{% url 'teachers:assignments_list' %}" class="btn">Back</a>
+  </div>
+
+  {% if submissions %}
+    <table class="min-w-full bg-white">
+      <thead>
+        <tr>
+          <th class="px-4 py-2">Student</th>
+          <th class="px-4 py-2">Submitted At</th>
+          <th class="px-4 py-2">Marks</th>
+          <th class="px-4 py-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in submissions %}
+        <tr class="border-t">
+          <td class="px-4 py-2">{{ s.student }}</td>
+          <td class="px-4 py-2">{{ s.submitted_at }}</td>
+          <td class="px-4 py-2">{% if s.marks_obtained %}{{ s.marks_obtained }}{% else %}-{% endif %}</td>
+          <td class="px-4 py-2">
+            {% if s.file %}
+              <a href="{{ s.file.url }}" class="text-indigo-600">Download</a>
+            {% endif %}
+            <a href="{% url 'teachers:grade_submission' assignment.id s.id %}" class="ml-4 text-green-600">Grade</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No submissions yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

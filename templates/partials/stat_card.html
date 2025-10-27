@@ -1,0 +1,15 @@
+{# Usage: include 'partials/stat_card.html' with title='Total Students' value=12345 delta='+2.4' icon='fa-users' #}
+<div class="bg-white rounded-lg p-4 shadow-sm">
+  <div class="flex items-start justify-between">
+    <div>
+      <div class="text-sm text-slate-500">{{ title }}</div>
+      <div class="mt-2 text-2xl font-bold" aria-live="polite">{{ value }}</div>
+      {% if delta %}
+        <div class="text-sm mt-1 {{ 'text-green-600' if delta|slice:0:1 == '+' else 'text-red-600' }}">{{ delta }} vs last month</div>
+      {% endif %}
+    </div>
+    <div class="text-3xl text-slate-300">
+      <i class="fas {{ icon }}"></i>
+    </div>
+  </div>
+</div>

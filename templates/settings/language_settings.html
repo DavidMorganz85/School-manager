@@ -1,0 +1,557 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Language Settings" %} - School Manager{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">{% trans "Language Settings" %}</h1>
+        <p class="text-gray-600">{% trans "Configure language preferences for the school management system" %}</p>
+      </div>
+      <div class="mt-4 sm:mt-0 flex space-x-3">
+        <button onclick="addLanguage()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+          <i class="fas fa-plus mr-2"></i>
+          {% trans "Add Language" %}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Current Language Settings -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <h3 class="text-lg font-medium text-gray-900">{% trans "Current Language Settings" %}</h3>
+  </div>
+  <div class="p-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-medium text-gray-900">{% trans "Default Language" %}</h4>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+            {% trans "Active" %}
+          </span>
+        </div>
+        <p class="text-sm text-gray-600">English (US)</p>
+        <p class="text-xs text-gray-500 mt-1">{% trans "Primary language for the system" %}</p>
+      </div>
+      
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-medium text-gray-900">{% trans "Available Languages" %}</h4>
+          <span class="text-sm text-gray-600">5</span>
+        </div>
+        <p class="text-sm text-gray-600">{% trans "Languages configured for the system" %}</p>
+        <p class="text-xs text-gray-500 mt-1">{% trans "Students and staff can choose from these" %}</p>
+      </div>
+      
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-sm font-medium text-gray-900">{% trans "Auto-Detection" %}</h4>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+            {% trans "Enabled" %}
+          </span>
+        </div>
+        <p class="text-sm text-gray-600">{% trans "Detect language from browser settings" %}</p>
+        <p class="text-xs text-gray-500 mt-1">{% trans "Automatically set language based on user's browser" %}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Language List -->
+<div class="bg-white shadow-sm border border-gray-200 rounded-lg mb-8">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <h3 class="text-lg font-medium text-gray-900">{% trans "Configured Languages" %}</h3>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{% trans "Language" %}</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{% trans "Code" %}</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{% trans "Status" %}</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{% trans "Translation Progress" %}</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{% trans "Actions" %}</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10">
+                <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <span class="text-sm font-medium text-blue-600">EN</span>
+                </div>
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">English</div>
+                <div class="text-sm text-gray-500">United States</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">en-us</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              <i class="fas fa-check-circle mr-1"></i>{% trans "Active" %}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="w-full bg-gray-200 rounded-full h-2 mr-2">
+                <div class="bg-green-600 h-2 rounded-full" style="width: 100%"></div>
+              </div>
+              <span class="text-sm text-gray-600">100%</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <div class="flex space-x-2">
+              <button onclick="editLanguage('en-us')" class="text-blue-600 hover:text-blue-900">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button onclick="translateLanguage('en-us')" class="text-green-600 hover:text-green-900">
+                <i class="fas fa-language"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10">
+                <div class="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
+                  <span class="text-sm font-medium text-red-600">ES</span>
+                </div>
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">Spanish</div>
+                <div class="text-sm text-gray-500">España</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">es-es</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+              <i class="fas fa-clock mr-1"></i>{% trans "In Progress" %}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="w-full bg-gray-200 rounded-full h-2 mr-2">
+                <div class="bg-yellow-600 h-2 rounded-full" style="width: 75%"></div>
+              </div>
+              <span class="text-sm text-gray-600">75%</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <div class="flex space-x-2">
+              <button onclick="editLanguage('es-es')" class="text-blue-600 hover:text-blue-900">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button onclick="translateLanguage('es-es')" class="text-green-600 hover:text-green-900">
+                <i class="fas fa-language"></i>
+              </button>
+              <button onclick="activateLanguage('es-es')" class="text-green-600 hover:text-green-900">
+                <i class="fas fa-play"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10">
+                <div class="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                  <span class="text-sm font-medium text-green-600">FR</span>
+                </div>
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">French</div>
+                <div class="text-sm text-gray-500">France</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">fr-fr</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              <i class="fas fa-check-circle mr-1"></i>{% trans "Active" %}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="w-full bg-gray-200 rounded-full h-2 mr-2">
+                <div class="bg-green-600 h-2 rounded-full" style="width: 90%"></div>
+              </div>
+              <span class="text-sm text-gray-600">90%</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <div class="flex space-x-2">
+              <button onclick="editLanguage('fr-fr')" class="text-blue-600 hover:text-blue-900">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button onclick="translateLanguage('fr-fr')" class="text-green-600 hover:text-green-900">
+                <i class="fas fa-language"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10">
+                <div class="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+                  <span class="text-sm font-medium text-purple-600">DE</span>
+                </div>
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">German</div>
+                <div class="text-sm text-gray-500">Deutschland</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">de-de</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+              <i class="fas fa-pause mr-1"></i>{% trans "Inactive" %}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="w-full bg-gray-200 rounded-full h-2 mr-2">
+                <div class="bg-gray-600 h-2 rounded-full" style="width: 45%"></div>
+              </div>
+              <span class="text-sm text-gray-600">45%</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <div class="flex space-x-2">
+              <button onclick="editLanguage('de-de')" class="text-blue-600 hover:text-blue-900">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button onclick="translateLanguage('de-de')" class="text-green-600 hover:text-green-900">
+                <i class="fas fa-language"></i>
+              </button>
+              <button onclick="activateLanguage('de-de')" class="text-green-600 hover:text-green-900">
+                <i class="fas fa-play"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10">
+                <div class="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
+                  <span class="text-sm font-medium text-orange-600">AR</span>
+                </div>
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">Arabic</div>
+                <div class="text-sm text-gray-500">العربية</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">ar-sa</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+              <i class="fas fa-clock mr-1"></i>{% trans "In Progress" %}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="w-full bg-gray-200 rounded-full h-2 mr-2">
+                <div class="bg-yellow-600 h-2 rounded-full" style="width: 60%"></div>
+              </div>
+              <span class="text-sm text-gray-600">60%</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <div class="flex space-x-2">
+              <button onclick="editLanguage('ar-sa')" class="text-blue-600 hover:text-blue-900">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button onclick="translateLanguage('ar-sa')" class="text-green-600 hover:text-green-900">
+                <i class="fas fa-language"></i>
+              </button>
+              <button onclick="activateLanguage('ar-sa')" class="text-green-600 hover:text-green-900">
+                <i class="fas fa-play"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Translation Management -->
+<div class="bg-white shadow-sm border border-gray-200 rounded-lg mb-8">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <h3 class="text-lg font-medium text-gray-900">{% trans "Translation Management" %}</h3>
+  </div>
+  <div class="p-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <h4 class="text-sm font-medium text-gray-900 mb-3">{% trans "Quick Actions" %}</h4>
+        <div class="space-y-2">
+          <button onclick="autoTranslate()" class="w-full text-left p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200">
+            <div class="flex items-center">
+              <i class="fas fa-magic text-blue-600 mr-3"></i>
+              <span class="text-sm font-medium text-gray-900">{% trans "Auto-Translate Missing Keys" %}</span>
+            </div>
+          </button>
+          
+          <button onclick="exportTranslations()" class="w-full text-left p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors duration-200">
+            <div class="flex items-center">
+              <i class="fas fa-download text-green-600 mr-3"></i>
+              <span class="text-sm font-medium text-gray-900">{% trans "Export Translation Files" %}</span>
+            </div>
+          </button>
+          
+          <button onclick="importTranslations()" class="w-full text-left p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors duration-200">
+            <div class="flex items-center">
+              <i class="fas fa-upload text-purple-600 mr-3"></i>
+              <span class="text-sm font-medium text-gray-900">{% trans "Import Translation Files" %}</span>
+            </div>
+          </button>
+        </div>
+      </div>
+      
+      <div>
+        <h4 class="text-sm font-medium text-gray-900 mb-3">{% trans "Translation Statistics" %}</h4>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">{% trans "Total Keys" %}</span>
+            <span class="text-sm font-medium text-gray-900">1,247</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">{% trans "Translated Keys" %}</span>
+            <span class="text-sm font-medium text-gray-900">1,156</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">{% trans "Missing Keys" %}</span>
+            <span class="text-sm font-medium text-gray-900">91</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">{% trans "Completion Rate" %}</span>
+            <span class="text-sm font-medium text-gray-900">92.7%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Language Modal -->
+<div id="addLanguageModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+  <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+    <div class="mt-3">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-medium text-gray-900">{% trans "Add New Language" %}</h3>
+        <button onclick="closeAddLanguageModal()" class="text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <form id="addLanguageForm" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">{% trans "Language Name" %}</label>
+            <input type="text" id="languageName" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700">{% trans "Language Code" %}</label>
+            <input type="text" id="languageCode" placeholder="e.g., es-es" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700">{% trans "Country/Region" %}</label>
+          <input type="text" id="countryRegion" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700">{% trans "RTL Support" %}</label>
+          <div class="mt-2">
+            <label class="inline-flex items-center">
+              <input type="checkbox" class="form-checkbox" id="rtlSupport">
+              <span class="ml-2 text-sm text-gray-700">{% trans "Enable right-to-left text direction" %}</span>
+            </label>
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700">{% trans "Auto-Translation" %}</label>
+          <div class="mt-2">
+            <label class="inline-flex items-center">
+              <input type="checkbox" class="form-checkbox" id="autoTranslation" checked>
+              <span class="ml-2 text-sm text-gray-700">{% trans "Use automatic translation for initial setup" %}</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" onclick="closeAddLanguageModal()" class="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            {% trans "Cancel" %}
+          </button>
+          <button type="submit" class="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700">
+            {% trans "Add Language" %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+function addLanguage() {
+  document.getElementById('addLanguageModal').classList.remove('hidden');
+}
+
+function closeAddLanguageModal() {
+  document.getElementById('addLanguageModal').classList.add('hidden');
+  document.getElementById('addLanguageForm').reset();
+}
+
+function editLanguage(languageCode) {
+  // In a real implementation, this would open the language editor
+  alert('Edit language: ' + languageCode);
+}
+
+function translateLanguage(languageCode) {
+  // In a real implementation, this would open the translation interface
+  alert('Translate language: ' + languageCode);
+}
+
+function activateLanguage(languageCode) {
+  if (confirm('Are you sure you want to activate this language?')) {
+    // In a real implementation, this would activate the language
+    alert('Language activated: ' + languageCode);
+  }
+}
+
+function autoTranslate() {
+  if (confirm('This will automatically translate missing keys using AI. Continue?')) {
+    // In a real implementation, this would start auto-translation
+    alert('Auto-translation started...');
+  }
+}
+
+function exportTranslations() {
+  // In a real implementation, this would export translation files
+  alert('Exporting translation files...');
+}
+
+function importTranslations() {
+  // In a real implementation, this would open file picker for import
+  alert('Import translation files');
+}
+
+// Form submission
+document.getElementById('addLanguageForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  // In a real implementation, this would add the language
+  const formData = new FormData(this);
+  console.log('Adding language:', Object.fromEntries(formData));
+  
+  closeAddLanguageModal();
+  alert('Language added successfully!');
+});
+
+// Close modal when clicking outside
+document.getElementById('addLanguageModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeAddLanguageModal();
+  }
+});
+
+// Language switcher functionality
+function switchLanguage(languageCode) {
+  // In a real implementation, this would change the current language
+  console.log('Switching to language:', languageCode);
+  
+  // Show loading state
+  const currentLang = document.querySelector('.language-active');
+  if (currentLang) {
+    currentLang.classList.remove('language-active');
+  }
+  
+  // Update UI to show new language
+  alert('Language switched to: ' + languageCode);
+}
+
+// Add language switcher to the page
+document.addEventListener('DOMContentLoaded', function() {
+  // Create language switcher dropdown
+  const languageSwitcher = document.createElement('div');
+  languageSwitcher.className = 'fixed top-4 right-4 z-50';
+  languageSwitcher.innerHTML = `
+    <div class="relative">
+      <button onclick="toggleLanguageDropdown()" class="flex items-center space-x-2 bg-white border border-gray-300 rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500">
+        <i class="fas fa-globe"></i>
+        <span>EN</span>
+        <i class="fas fa-chevron-down"></i>
+      </button>
+      <div id="languageDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-10">
+        <div class="py-1">
+          <button onclick="switchLanguage('en-us')" class="language-active block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+            <span class="mr-2">🇺🇸</span> English
+          </button>
+          <button onclick="switchLanguage('es-es')" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+            <span class="mr-2">🇪🇸</span> Español
+          </button>
+          <button onclick="switchLanguage('fr-fr')" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+            <span class="mr-2">🇫🇷</span> Français
+          </button>
+          <button onclick="switchLanguage('de-de')" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+            <span class="mr-2">🇩🇪</span> Deutsch
+          </button>
+          <button onclick="switchLanguage('ar-sa')" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+            <span class="mr-2">🇸🇦</span> العربية
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(languageSwitcher);
+});
+
+function toggleLanguageDropdown() {
+  const dropdown = document.getElementById('languageDropdown');
+  dropdown.classList.toggle('hidden');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  const dropdown = document.getElementById('languageDropdown');
+  const button = e.target.closest('button');
+  
+  if (!button || !button.onclick || button.onclick.toString().indexOf('toggleLanguageDropdown') === -1) {
+    if (dropdown && !dropdown.classList.contains('hidden')) {
+      dropdown.classList.add('hidden');
+    }
+  }
+});
+</script>
+
+<style>
+.language-active {
+  background-color: #f3f4f6;
+  font-weight: 600;
+}
+</style>
+{% endblock %}

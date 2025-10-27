@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Invoices{% endblock %}
+{% block content %}
+<h3 class="fw-bold mb-4">Invoices</h3>
+<div class="card p-3">
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Student</th>
+                <th>Total</th>
+                <th>Issued Date</th>
+                <th>Paid</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+            <tr>
+                <td>{{ invoice.student.user.get_full_name }}</td>
+                <td>${{ invoice.total }}</td>
+                <td>{{ invoice.issued_date }}</td>
+                <td>{% if invoice.paid %}<span class="badge bg-success">Paid</span>{% else %}<span class="badge bg-danger">Pending</span>{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

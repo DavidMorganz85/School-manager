@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Send Message{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+  <h2 class="text-2xl font-bold mb-4">Send Message</h2>
+  <form method="post">
+    {% csrf_token %}
+    <label class="block text-sm font-medium">Recipient</label>
+    <select name="recipient" class="mt-1 block w-full border rounded p-2">
+      {% for u in users %}
+      <option value="{{ u.pk }}">{{ u.get_full_name|default:u.username }} ({{ u.role }})</option>
+      {% endfor %}
+    </select>
+    <label class="block text-sm font-medium mt-3">Subject</label>
+    <input name="subject" class="mt-1 block w-full border rounded p-2" />
+    <label class="block text-sm font-medium mt-3">Message</label>
+    <textarea name="body" rows="6" class="mt-1 block w-full border rounded p-2"></textarea>
+    <div class="mt-4">
+      <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded">Send</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Topbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white mb-4 rounded shadow-sm">
+  <div class="container-fluid">
+    <span class="navbar-brand">Welcome, {{ user.get_full_name }}!</span>
+    <form class="d-flex">
+      <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search">
+    </form>
+    <div class="dropdown">
+      <a class="btn btn-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+        <img src="{{ user.profile_photo.url }}" alt="Profile" class="rounded-circle" width="32" height="32">
+        {{ user.username }}
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="#">Settings</a></li>
+        <li><a class="dropdown-item" href="#">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+  <div class="col-md-2">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Total Classes</h6>
+        <h3>{{ total_classes }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Total Students</h6>
+        <h3>{{ total_students }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Exams Scheduled</h6>
+        <h3>{{ exams_scheduled }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Pending Marks</h6>
+        <h3>{{ pending_marks }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Students at Risk</h6>
+        <h3>{{ students_at_risk }}</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="mb-4 d-flex flex-wrap gap-2">
+  <a href="#" class="btn btn-primary"><i class="fa fa-check"></i> Approve Marks</a>
+  <a href="#" class="btn btn-success"><i class="fa fa-file-alt"></i> Generate Reports</a>
+  <a href="#" class="btn btn-info"><i class="fa fa-bullhorn"></i> Send Academic Announcement</a>
+</div>
+
+<!-- Charts -->
+<div class="row mb-4">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h6>School-wide Exam Performance</h6>
+        <canvas id="examPerformanceChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h6>Attendance vs Performance</h6>
+        <canvas id="attendancePerformanceChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const examPerfLabels = {{ exam_perf_labels|safe }};
+  const examPerfData = {{ exam_perf_data|safe }};
+  const examPerfCtx = document.getElementById('examPerformanceChart').getContext('2d');
+  new Chart(examPerfCtx, {
+    type: 'line',
+    data: {
+      labels: examPerfLabels,
+      datasets: [{
+        label: 'Average Score',
+        data: examPerfData,
+        borderColor: 'rgba(0, 123, 255, 0.7)',
+        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+        tension: 0.3,
+        fill: true,
+        pointRadius: 4,
+        pointBackgroundColor: 'rgba(0, 123, 255, 1)',
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+  });
+
+  const attPerfLabels = {{ att_perf_labels|safe }};
+  const attPerfData = {{ att_perf_data|safe }};
+  const attPerfCtx = document.getElementById('attendancePerformanceChart').getContext('2d');
+  new Chart(attPerfCtx, {
+    type: 'bar',
+    data: {
+      labels: attPerfLabels,
+      datasets: [{
+        label: 'Attendance %',
+        data: attPerfData,
+        backgroundColor: 'rgba(13, 27, 42, 0.7)',
+        borderRadius: 6,
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+  });
+</script>
+
+<!-- Exams & Assessments -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Exams & Assessments</h6>
+    <table class="table table-bordered table-sm">
+      <thead>
+        <tr><th>Exam</th><th>Class</th><th>Subject</th><th>Date</th><th>Marks Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for e in exams %}
+          <tr>
+            <td>{{ e.name }}</td>
+            <td>{{ e.class }}</td>
+            <td>{{ e.subject }}</td>
+            <td>{{ e.date }}</td>
+            <td>{{ e.marks_status }}</td>
+            <td>
+              <a href="#" class="btn btn-sm btn-outline-success">Approve</a>
+              <a href="#" class="btn btn-sm btn-outline-danger">Edit</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6">No exams found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Results & Academic Reports -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Results & Academic Reports</h6>
+    <table class="table table-bordered table-sm">
+      <thead>
+        <tr><th>Student</th><th>Class</th><th>Subject</th><th>Score</th><th>Term</th><th>Year</th><th>Top Performer</th><th>At Risk</th></tr>
+      </thead>
+      <tbody>
+        {% for r in results %}
+          <tr {% if r.at_risk %}class="table-danger"{% endif %}>
+            <td>{{ r.student }}</td>
+            <td>{{ r.class }}</td>
+            <td>{{ r.subject }}</td>
+            <td>{{ r.score }}</td>
+            <td>{{ r.term }}</td>
+            <td>{{ r.year }}</td>
+            <td>{% if r.top_performer %}<span class="badge bg-success">Top</span>{% endif %}</td>
+            <td>{% if r.at_risk %}<span class="badge bg-danger">Warning</span>{% endif %}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="8">No results found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Teacher Oversight -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Teacher Oversight</h6>
+    <table class="table table-bordered table-sm">
+      <thead>
+        <tr><th>Name</th><th>Submissions</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for t in teachers %}
+          <tr>
+            <td>{{ t.name }}</td>
+            <td>{{ t.submissions }}</td>
+            <td>
+              <a href="#" class="btn btn-sm btn-outline-success">Approve</a>
+              <a href="#" class="btn btn-sm btn-outline-danger">Request Revision</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="3">No teachers found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Class & Student Oversight -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Class & Student Oversight</h6>
+    <table class="table table-bordered table-sm">
+      <thead>
+        <tr><th>Class</th><th>Attendance</th><th>Performance</th><th>Students at Risk</th></tr>
+      </thead>
+      <tbody>
+        {% for c in classes %}
+          <tr>
+            <td>{{ c.name }}</td>
+            <td>{{ c.attendance }}%</td>
+            <td>{{ c.performance }}</td>
+            <td>{{ c.at_risk }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">No classes found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Notifications & Communication -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Notifications & Communication</h6>
+    <ul>
+      {% for n in notifications %}
+        <li>{{ n.message }} <span class="text-muted">{{ n.sent_at }}</span></li>
+      {% empty %}
+        <li>No notifications.</li>
+      {% endfor %}
+    </ul>
+    <form class="mt-3">
+      <div class="input-group">
+        <input type="text" name="announcement" class="form-control" placeholder="Send academic announcement...">
+        <button type="submit" class="btn btn-primary">Send</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

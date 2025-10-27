@@ -1,0 +1,577 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Exam Management - School Manager{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Exam Management</h1>
+        <p class="text-gray-600">Schedule exams, manage grading, and track student performance</p>
+      </div>
+      <div class="mt-4 sm:mt-0 flex space-x-3">
+        <button onclick="exportResults()" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+          <i class="fas fa-download mr-2"></i>
+          Export Results
+        </button>
+        <button onclick="createExam()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+          <i class="fas fa-plus mr-2"></i>
+          Schedule Exam
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-calendar-alt text-white"></i>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Upcoming Exams</dt>
+            <dd class="text-3xl font-bold text-gray-900">{{ upcoming_exams }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-check-circle text-white"></i>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Completed Exams</dt>
+            <dd class="text-3xl font-bold text-gray-900">{{ completed_exams }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-clock text-white"></i>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Pending Grading</dt>
+            <dd class="text-3xl font-bold text-gray-900">{{ pending_grading }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-chart-line text-white"></i>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Average Score</dt>
+            <dd class="text-3xl font-bold text-gray-900">{{ average_score }}%</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <button onclick="viewTimetable()" class="flex items-center justify-center p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200">
+    <i class="fas fa-calendar text-blue-600 text-2xl mr-3"></i>
+    <span class="text-sm font-medium text-blue-900">View Timetable</span>
+  </button>
+  <button onclick="gradeExams()" class="flex items-center justify-center p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors duration-200">
+    <i class="fas fa-edit text-green-600 text-2xl mr-3"></i>
+    <span class="text-sm font-medium text-green-900">Grade Exams</span>
+  </button>
+  <button onclick="generateReports()" class="flex items-center justify-center p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors duration-200">
+    <i class="fas fa-chart-bar text-purple-600 text-2xl mr-3"></i>
+    <span class="text-sm font-medium text-purple-900">Generate Reports</span>
+  </button>
+  <button onclick="manageQuestions()" class="flex items-center justify-center p-4 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors duration-200">
+    <i class="fas fa-question-circle text-yellow-600 text-2xl mr-3"></i>
+    <span class="text-sm font-medium text-yellow-900">Manage Questions</span>
+  </button>
+</div>
+
+<!-- Filters -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+  <div class="p-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+        <input type="text" id="examSearch" placeholder="Exam name or subject" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+        <select id="statusFilter" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500">
+          <option value="">All Status</option>
+          <option value="scheduled">Scheduled</option>
+          <option value="ongoing">Ongoing</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+        <select id="subjectFilter" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500">
+          <option value="">All Subjects</option>
+          <option value="mathematics">Mathematics</option>
+          <option value="english">English</option>
+          <option value="science">Science</option>
+          <option value="history">History</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+        <input type="date" id="dateFilter" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500">
+      </div>
+    </div>
+    <div class="mt-4 flex justify-end">
+      <button onclick="applyFilters()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700">
+        <i class="fas fa-search mr-2"></i>
+        Apply Filters
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Exams Table -->
+<div class="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <h3 class="text-lg font-medium text-gray-900">Exams</h3>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Exam</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Students</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="examsTableBody" class="bg-white divide-y divide-gray-200">
+        {% for exam in exams %}
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10">
+                <div class="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
+                  <i class="fas fa-file-alt text-primary-600"></i>
+                </div>
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">{{ exam.name }}</div>
+                <div class="text-sm text-gray-500">{{ exam.exam_type }}</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ exam.subject.name }}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <div>{{ exam.date|date:"M d, Y" }}</div>
+            <div class="text-gray-500">{{ exam.start_time|time:"H:i" }} - {{ exam.end_time|time:"H:i" }}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ exam.duration }} minutes</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            {% if exam.status == 'scheduled' %}
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                <i class="fas fa-calendar mr-1"></i>Scheduled
+              </span>
+            {% elif exam.status == 'ongoing' %}
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                <i class="fas fa-clock mr-1"></i>Ongoing
+              </span>
+            {% elif exam.status == 'completed' %}
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                <i class="fas fa-check-circle mr-1"></i>Completed
+              </span>
+            {% else %}
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                <i class="fas fa-times-circle mr-1"></i>Cancelled
+              </span>
+            {% endif %}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ exam.students_count }}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <div class="flex space-x-2">
+              <button onclick="viewExam({{ exam.id }})" class="text-blue-600 hover:text-blue-900">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button onclick="editExam({{ exam.id }})" class="text-gray-600 hover:text-gray-900">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button onclick="gradeExam({{ exam.id }})" class="text-green-600 hover:text-green-900">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button onclick="deleteExam({{ exam.id }})" class="text-red-600 hover:text-red-900">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="px-6 py-4 text-center text-gray-500">No exams found</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Create Exam Modal -->
+<div id="createExamModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+  <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+    <div class="mt-3">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-medium text-gray-900">Schedule New Exam</h3>
+        <button onclick="closeCreateExamModal()" class="text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <form id="createExamForm" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Exam Name</label>
+            <input type="text" id="examName" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Exam Type</label>
+            <select id="examType" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+              <option value="">Select Type</option>
+              <option value="quiz">Quiz</option>
+              <option value="midterm">Midterm</option>
+              <option value="final">Final</option>
+              <option value="assignment">Assignment</option>
+              <option value="practical">Practical</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Subject</label>
+            <select id="examSubject" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+              <option value="">Select Subject</option>
+              <option value="mathematics">Mathematics</option>
+              <option value="english">English</option>
+              <option value="science">Science</option>
+              <option value="history">History</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Class</label>
+            <select id="examClass" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+              <option value="">Select Class</option>
+              <option value="grade-9">Grade 9</option>
+              <option value="grade-10">Grade 10</option>
+              <option value="grade-11">Grade 11</option>
+              <option value="grade-12">Grade 12</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Date</label>
+            <input type="date" id="examDate" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Start Time</label>
+            <input type="time" id="startTime" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Duration (minutes)</label>
+            <input type="number" id="examDuration" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Total Marks</label>
+            <input type="number" id="totalMarks" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Passing Marks</label>
+            <input type="number" id="passingMarks" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" required>
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Instructions</label>
+          <textarea id="examInstructions" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"></textarea>
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" onclick="closeCreateExamModal()" class="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700">
+            Schedule Exam
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Grading Modal -->
+<div id="gradingModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+  <div class="relative top-20 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">
+    <div class="mt-3">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-medium text-gray-900">Grade Exam</h3>
+        <button onclick="closeGradingModal()" class="text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="space-y-4">
+        <div class="bg-gray-50 rounded-lg p-4">
+          <h4 class="text-sm font-medium text-gray-900 mb-2">Exam: Mathematics Midterm</h4>
+          <p class="text-sm text-gray-600">Total Marks: 100 | Passing Marks: 40</p>
+        </div>
+        
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Marks Obtained</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="gradingTableBody" class="bg-white divide-y divide-gray-200">
+              <!-- Grading rows will be populated here -->
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+          <button onclick="closeGradingModal()" class="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            Cancel
+          </button>
+          <button onclick="saveGrades()" class="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700">
+            Save Grades
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+function createExam() {
+  document.getElementById('createExamModal').classList.remove('hidden');
+}
+
+function closeCreateExamModal() {
+  document.getElementById('createExamModal').classList.add('hidden');
+  document.getElementById('createExamForm').reset();
+}
+
+function gradeExam(examId) {
+  document.getElementById('gradingModal').classList.remove('hidden');
+  loadGradingData(examId);
+}
+
+function closeGradingModal() {
+  document.getElementById('gradingModal').classList.add('hidden');
+}
+
+function loadGradingData(examId) {
+  // Simulate loading grading data
+  const gradingData = [
+    { student: 'John Doe', marks: 85, grade: 'A', status: 'Pass' },
+    { student: 'Jane Smith', marks: 72, grade: 'B', status: 'Pass' },
+    { student: 'Bob Johnson', marks: 35, grade: 'F', status: 'Fail' }
+  ];
+  
+  const tbody = document.getElementById('gradingTableBody');
+  tbody.innerHTML = '';
+  
+  gradingData.forEach((data, index) => {
+    const row = tbody.insertRow();
+    row.innerHTML = `
+      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${data.student}</td>
+      <td class="px-6 py-4 whitespace-nowrap">
+        <input type="number" value="${data.marks}" class="border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 w-20" onchange="updateGrade(${index})">
+      </td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" id="grade-${index}">${data.grade}</td>
+      <td class="px-6 py-4 whitespace-nowrap" id="status-${index}">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${data.status === 'Pass' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+          ${data.status}
+        </span>
+      </td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+        <button onclick="viewAnswerSheet(${index})" class="text-blue-600 hover:text-blue-900">
+          <i class="fas fa-eye"></i>
+        </button>
+      </td>
+    `;
+  });
+}
+
+function updateGrade(index) {
+  const marksInput = document.querySelector(`input[onchange="updateGrade(${index})"]`);
+  const marks = parseInt(marksInput.value);
+  const gradeCell = document.getElementById(`grade-${index}`);
+  const statusCell = document.getElementById(`status-${index}`);
+  
+  let grade, status, statusClass;
+  
+  if (marks >= 90) {
+    grade = 'A+';
+    status = 'Pass';
+    statusClass = 'bg-green-100 text-green-800';
+  } else if (marks >= 80) {
+    grade = 'A';
+    status = 'Pass';
+    statusClass = 'bg-green-100 text-green-800';
+  } else if (marks >= 70) {
+    grade = 'B';
+    status = 'Pass';
+    statusClass = 'bg-green-100 text-green-800';
+  } else if (marks >= 60) {
+    grade = 'C';
+    status = 'Pass';
+    statusClass = 'bg-green-100 text-green-800';
+  } else if (marks >= 40) {
+    grade = 'D';
+    status = 'Pass';
+    statusClass = 'bg-green-100 text-green-800';
+  } else {
+    grade = 'F';
+    status = 'Fail';
+    statusClass = 'bg-red-100 text-red-800';
+  }
+  
+  gradeCell.textContent = grade;
+  statusCell.innerHTML = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">${status}</span>`;
+}
+
+function viewAnswerSheet(index) {
+  alert('View answer sheet for student ' + index);
+}
+
+function saveGrades() {
+  // In a real implementation, this would save grades to the database
+  alert('Grades saved successfully!');
+  closeGradingModal();
+}
+
+function viewExam(examId) {
+  // In a real implementation, this would open exam details
+  alert('View exam details for ID: ' + examId);
+}
+
+function editExam(examId) {
+  // In a real implementation, this would open edit form
+  alert('Edit exam for ID: ' + examId);
+}
+
+function deleteExam(examId) {
+  if (confirm('Are you sure you want to delete this exam?')) {
+    // In a real implementation, this would delete the exam
+    alert('Exam deleted successfully!');
+  }
+}
+
+function viewTimetable() {
+  alert('View exam timetable');
+}
+
+function gradeExams() {
+  alert('Grade exams interface');
+}
+
+function generateReports() {
+  alert('Generate exam reports');
+}
+
+function manageQuestions() {
+  alert('Manage exam questions');
+}
+
+function exportResults() {
+  alert('Export exam results');
+}
+
+function applyFilters() {
+  // In a real implementation, this would filter the exams
+  console.log('Applying filters...');
+}
+
+// Form submission
+document.getElementById('createExamForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  // In a real implementation, this would create the exam
+  const formData = new FormData(this);
+  console.log('Creating exam:', Object.fromEntries(formData));
+  
+  closeCreateExamModal();
+  alert('Exam scheduled successfully!');
+});
+
+// Close modals when clicking outside
+document.getElementById('createExamModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeCreateExamModal();
+  }
+});
+
+document.getElementById('gradingModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeGradingModal();
+  }
+});
+
+// Set default values
+document.getElementById('examDate').valueAsDate = new Date();
+document.getElementById('startTime').value = '09:00';
+document.getElementById('examDuration').value = '120';
+document.getElementById('totalMarks').value = '100';
+document.getElementById('passingMarks').value = '40';
+</script>
+{% endblock %}

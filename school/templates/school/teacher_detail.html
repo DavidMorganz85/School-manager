@@ -1,0 +1,9 @@
+{% extends 'school/base.html' %}
+
+{% block title %}{{ teacher }} - Teacher{% endblock %}
+
+{% block content %}
+  <h2>{{ teacher }}</h2>
+  <p>Email: {{ teacher.email }}</p>
+  <p><a href="{% url 'school:teacher_list' %}">Back to teachers</a></p>
+{% endblock %}

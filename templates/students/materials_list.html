@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Materials{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <h2 class="text-2xl font-bold mb-4">Materials</h2>
+  {% if materials %}
+    <ul class="space-y-3">
+      {% for m in materials %}
+      <li class="bg-white p-3 rounded shadow">
+        <div class="flex justify-between items-center">
+          <div>
+            <div class="font-semibold">{{ m.title }}</div>
+            <div class="text-sm text-gray-500">Uploaded: {{ m.uploaded_at }}</div>
+          </div>
+          <div>
+            {% if m.file %}
+            <a href="{{ m.file.url }}" class="text-indigo-600">Download</a>
+            {% else %}
+            <span class="text-gray-500">No file</span>
+            {% endif %}
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-gray-500">No materials available.</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'school/base.html' %}
+
+{% block content %}
+  <h2>Marks</h2>
+  <a class="btn btn-primary mb-2" href="{% url 'school:mark_create' %}">Add Marks</a>
+  <table class="table table-striped">
+    <thead><tr><th>Exam</th><th>Student</th><th>Marks</th></tr></thead>
+    <tbody>
+      {% for m in marks %}
+        <tr>
+          <td>{{ m.exam.title }} ({{ m.exam.subject }})</td>
+          <td>{{ m.student }}</td>
+          <td>{{ m.marks_obtained }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="3">No marks entered</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

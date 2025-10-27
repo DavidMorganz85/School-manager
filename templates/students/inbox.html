@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Inbox{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+  <h2 class="text-2xl font-bold mb-4">Inbox</h2>
+  {% if messages %}
+    <ul class="space-y-3">
+      {% for m in messages %}
+      <li class="bg-white p-3 rounded shadow">
+        <div class="flex justify-between">
+          <div>
+            <div class="font-medium">{{ m.subject|default:'(no subject)' }}</div>
+            <div class="text-sm text-gray-500">From: {{ m.sender.get_full_name|default:m.sender.username }} &middot; {{ m.sent_at }}</div>
+            <div class="mt-2 text-sm">{{ m.body|truncatechars:200 }}</div>
+          </div>
+          <div class="text-sm">
+            {% if not m.read %}<span class="text-indigo-600">New</span>{% endif %}
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-gray-500">No messages</p>
+  {% endif %}
+</div>
+{% endblock %}

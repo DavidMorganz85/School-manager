@@ -1,0 +1,18 @@
+/* Minimal overrides for the landing page */
+.hero-image-cover {
+  object-fit: cover;
+}
+.feature-card {
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+.cta-gradient {
+  background: linear-gradient(90deg,#3b82f6,#06b6d4);
+}
+.footer-dark {
+  background-color: #0f172a;
+  color: #cbd5e1;
+}

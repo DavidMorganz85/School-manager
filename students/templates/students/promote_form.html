@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Promote Student: {{ student }}</h2>
+<form method="post">{% csrf_token %}
+    <label for="to_level">Promote to Level:</label>
+    <select name="to_level" id="to_level">
+        {% for level in levels %}
+        <option value="{{ level.id }}">{{ level }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Promote</button>
+</form>
+{% endblock %}

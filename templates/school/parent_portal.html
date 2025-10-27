@@ -1,0 +1,611 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Parent Portal - School Manager{% endblock %}
+
+{% block content %}
+<!-- Parent Portal Header -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="w-12 h-12 bg-primary-500 rounded-lg flex items-center justify-center">
+          <i class="fas fa-user-friends text-white text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">Parent Portal</h1>
+          <p class="text-gray-600">Welcome, {{ user.get_full_name }}! Monitor your child's progress and stay connected with the school.</p>
+        </div>
+      </div>
+      <div class="mt-4 lg:mt-0 flex space-x-3">
+        <button class="inline-flex items-center px-4 py-2 border border-primary-300 text-sm font-medium rounded-md text-primary-700 bg-primary-50 hover:bg-primary-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+          <i class="fas fa-envelope mr-2"></i>
+          Message Teacher
+        </button>
+        <button onclick="printReport()" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+          <i class="fas fa-print mr-2"></i>
+          Print Report
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Student Selection -->
+<div class="bg-white shadow-sm border border-gray-200 rounded-lg mb-6">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <h3 class="text-lg font-medium text-gray-900">Select Student</h3>
+  </div>
+  <div class="p-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for child in children %}
+      <div class="student-card cursor-pointer bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-primary-300 hover:shadow-md transition-all duration-200" onclick="selectStudent({{ child.id }})">
+        <div class="text-center">
+          {% if child.photo %}
+            <img src="{{ child.photo.url }}" class="w-20 h-20 rounded-full mx-auto mb-4 object-cover" alt="{{ child.user.get_full_name }}">
+          {% else %}
+            <div class="w-20 h-20 bg-primary-500 text-white rounded-full mx-auto mb-4 flex items-center justify-center">
+              <i class="fas fa-user text-2xl"></i>
+            </div>
+          {% endif %}
+          <h4 class="text-lg font-semibold text-gray-900">{{ child.user.get_full_name }}</h4>
+          <p class="text-sm text-gray-500">{{ child.school_class }} - {{ child.stream }}</p>
+          <p class="text-xs text-gray-400 mt-1">Student ID: {{ child.user.username }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Student Overview Cards -->
+<div id="studentOverview" class="hidden grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-clipboard-check text-white"></i>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Attendance</dt>
+            <dd class="text-3xl font-bold text-gray-900" id="attendancePercentage">0%</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-graduation-cap text-white"></i>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Average Grade</dt>
+            <dd class="text-3xl font-bold text-gray-900" id="averageGrade">0</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-tasks text-white"></i>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Assignments Due</dt>
+            <dd class="text-3xl font-bold text-gray-900" id="assignmentsDue">0</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-dollar-sign text-white"></i>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Fees Status</dt>
+            <dd class="text-3xl font-bold text-gray-900" id="feesStatus">Paid</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detailed Information Tabs -->
+<div id="studentDetails" class="hidden bg-white shadow-sm border border-gray-200 rounded-lg">
+  <div class="border-b border-gray-200">
+    <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
+      <button onclick="switchTab('attendance')" class="tab-button active py-4 px-1 border-b-2 border-primary-500 font-medium text-sm text-primary-600">
+        <i class="fas fa-calendar-check mr-2"></i>Attendance
+      </button>
+      <button onclick="switchTab('grades')" class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
+        <i class="fas fa-chart-line mr-2"></i>Grades
+      </button>
+      <button onclick="switchTab('assignments')" class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
+        <i class="fas fa-tasks mr-2"></i>Assignments
+      </button>
+      <button onclick="switchTab('fees')" class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
+        <i class="fas fa-credit-card mr-2"></i>Fees
+      </button>
+      <button onclick="switchTab('schedule')" class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
+        <i class="fas fa-clock mr-2"></i>Schedule
+      </button>
+      <button onclick="switchTab('messages')" class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
+        <i class="fas fa-comments mr-2"></i>Messages
+      </button>
+    </nav>
+  </div>
+
+  <div class="p-6">
+    <!-- Attendance Tab -->
+    <div id="attendance-tab" class="tab-content">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2">
+          <h4 class="text-lg font-medium text-gray-900 mb-4">Attendance Calendar</h4>
+          <div class="bg-gray-50 rounded-lg p-4 h-64 flex items-center justify-center">
+            <p class="text-gray-500">Calendar view would be implemented here</p>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-lg font-medium text-gray-900 mb-4">Attendance Summary</h4>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+              <span class="text-sm text-gray-600">Total Days:</span>
+              <span class="text-sm font-medium text-gray-900" id="totalDays">0</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+              <span class="text-sm text-gray-600">Present:</span>
+              <span class="text-sm font-medium text-gray-900" id="presentDays">0</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+              <span class="text-sm text-gray-600">Absent:</span>
+              <span class="text-sm font-medium text-gray-900" id="absentDays">0</span>
+            </div>
+            <div class="flex justify-between items-center py-2">
+              <span class="text-sm text-gray-600">Percentage:</span>
+              <span class="text-sm font-medium text-gray-900" id="attendancePercent">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grades Tab -->
+    <div id="grades-tab" class="tab-content hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2">
+          <h4 class="text-lg font-medium text-gray-900 mb-4">Subject-wise Grades</h4>
+          <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-300">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Term 1</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Term 2</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Term 3</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Average</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade</th>
+                </tr>
+              </thead>
+              <tbody id="gradesTable" class="bg-white divide-y divide-gray-200">
+                <!-- Grades will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-lg font-medium text-gray-900 mb-4">Performance Chart</h4>
+          <div class="h-64">
+            <canvas id="gradesChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assignments Tab -->
+    <div id="assignments-tab" class="tab-content hidden">
+      <h4 class="text-lg font-medium text-gray-900 mb-4">Recent Assignments</h4>
+      <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+        <table class="min-w-full divide-y divide-gray-300">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assignment</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade</th>
+            </tr>
+          </thead>
+          <tbody id="assignmentsTable" class="bg-white divide-y divide-gray-200">
+            <!-- Assignments will be populated here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Fees Tab -->
+    <div id="fees-tab" class="tab-content hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2">
+          <h4 class="text-lg font-medium text-gray-900 mb-4">Fee History</h4>
+          <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-300">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fee Type</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Date</th>
+                </tr>
+              </thead>
+              <tbody id="feesTable" class="bg-white divide-y divide-gray-200">
+                <!-- Fees will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-lg font-medium text-gray-900 mb-4">Payment Summary</h4>
+          <div class="bg-white border border-gray-200 rounded-lg p-4">
+            <div class="space-y-3">
+              <div class="flex justify-between">
+                <span class="text-sm text-gray-600">Total Due:</span>
+                <span class="text-sm font-medium text-gray-900" id="totalDue">$0</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm text-gray-600">Paid:</span>
+                <span class="text-sm font-medium text-gray-900" id="totalPaid">$0</span>
+              </div>
+              <div class="flex justify-between border-t pt-3">
+                <span class="text-sm font-medium text-gray-900">Balance:</span>
+                <span class="text-sm font-medium text-gray-900" id="balance">$0</span>
+              </div>
+              <button onclick="makePayment()" class="w-full mt-4 inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                Make Payment
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schedule Tab -->
+    <div id="schedule-tab" class="tab-content hidden">
+      <h4 class="text-lg font-medium text-gray-900 mb-4">Class Schedule</h4>
+      <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+        <table class="min-w-full divide-y divide-gray-300">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monday</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tuesday</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Wednesday</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thursday</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Friday</th>
+            </tr>
+          </thead>
+          <tbody id="scheduleTable" class="bg-white divide-y divide-gray-200">
+            <!-- Schedule will be populated here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Messages Tab -->
+    <div id="messages-tab" class="tab-content hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2">
+          <h4 class="text-lg font-medium text-gray-900 mb-4">Messages from Teachers</h4>
+          <div id="messagesList" class="space-y-4">
+            <!-- Messages will be populated here -->
+          </div>
+        </div>
+        <div>
+          <h4 class="text-lg font-medium text-gray-900 mb-4">Send Message</h4>
+          <form id="messageForm" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700">To:</label>
+              <select id="recipientSelect" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500">
+                <option value="">Select Teacher</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Subject:</label>
+              <input type="text" id="messageSubject" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Message:</label>
+              <textarea id="messageText" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"></textarea>
+            </div>
+            <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+              Send Message
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let selectedStudentId = null;
+
+function selectStudent(studentId) {
+  selectedStudentId = studentId;
+  
+  // Remove active class from all cards
+  document.querySelectorAll('.student-card').forEach(card => {
+    card.classList.remove('border-primary-300', 'ring-2', 'ring-primary-500');
+    card.classList.add('border-gray-200');
+  });
+  
+  // Add active class to selected card
+  event.currentTarget.classList.add('border-primary-300', 'ring-2', 'ring-primary-500');
+  event.currentTarget.classList.remove('border-gray-200');
+  
+  // Show student overview and details
+  document.getElementById('studentOverview').classList.remove('hidden');
+  document.getElementById('studentDetails').classList.remove('hidden');
+  
+  // Load student data
+  loadStudentData(studentId);
+}
+
+function switchTab(tabName) {
+  // Hide all tab contents
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.classList.add('hidden');
+  });
+  
+  // Remove active class from all tab buttons
+  document.querySelectorAll('.tab-button').forEach(button => {
+    button.classList.remove('active', 'border-primary-500', 'text-primary-600');
+    button.classList.add('border-transparent', 'text-gray-500');
+  });
+  
+  // Show selected tab content
+  document.getElementById(tabName + '-tab').classList.remove('hidden');
+  
+  // Add active class to selected tab button
+  event.target.classList.add('active', 'border-primary-500', 'text-primary-600');
+  event.target.classList.remove('border-transparent', 'text-gray-500');
+}
+
+function loadStudentData(studentId) {
+  // Simulate loading student data
+  document.getElementById('attendancePercentage').textContent = '85%';
+  document.getElementById('averageGrade').textContent = 'B+';
+  document.getElementById('assignmentsDue').textContent = '3';
+  document.getElementById('feesStatus').textContent = 'Paid';
+  
+  // Load all tab data
+  loadAttendanceData();
+  loadGradesData();
+  loadAssignmentsData();
+  loadFeesData();
+  loadScheduleData();
+  loadMessagesData();
+}
+
+function loadAttendanceData() {
+  document.getElementById('totalDays').textContent = '120';
+  document.getElementById('presentDays').textContent = '102';
+  document.getElementById('absentDays').textContent = '18';
+  document.getElementById('attendancePercent').textContent = '85%';
+}
+
+function loadGradesData() {
+  const gradesData = [
+    { subject: 'Mathematics', term1: 85, term2: 90, term3: 88, average: 87.7, grade: 'A-' },
+    { subject: 'English', term1: 78, term2: 82, term3: 85, average: 81.7, grade: 'B+' },
+    { subject: 'Science', term1: 92, term2: 88, term3: 90, average: 90.0, grade: 'A' },
+    { subject: 'History', term1: 75, term2: 80, term3: 78, average: 77.7, grade: 'B' }
+  ];
+  
+  const tbody = document.getElementById('gradesTable');
+  tbody.innerHTML = '';
+  
+  gradesData.forEach(grade => {
+    const row = tbody.insertRow();
+    row.innerHTML = `
+      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${grade.subject}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${grade.term1}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${grade.term2}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${grade.term3}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${grade.average}</td>
+      <td class="px-6 py-4 whitespace-nowrap">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">${grade.grade}</span>
+      </td>
+    `;
+  });
+  
+  createGradesChart(gradesData);
+}
+
+function createGradesChart(data) {
+  const ctx = document.getElementById('gradesChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: data.map(d => d.subject),
+      datasets: [{
+        label: 'Average Grade',
+        data: data.map(d => d.average),
+        backgroundColor: [
+          '#3b82f6',
+          '#10b981',
+          '#f59e0b',
+          '#ef4444'
+        ]
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        }
+      }
+    }
+  });
+}
+
+function loadAssignmentsData() {
+  const assignmentsData = [
+    { subject: 'Mathematics', assignment: 'Algebra Problems', dueDate: '2024-01-15', status: 'Submitted', grade: 'A' },
+    { subject: 'English', assignment: 'Essay Writing', dueDate: '2024-01-20', status: 'Pending', grade: '-' },
+    { subject: 'Science', assignment: 'Lab Report', dueDate: '2024-01-18', status: 'Submitted', grade: 'B+' }
+  ];
+  
+  const tbody = document.getElementById('assignmentsTable');
+  tbody.innerHTML = '';
+  
+  assignmentsData.forEach(assignment => {
+    const row = tbody.insertRow();
+    const statusClass = assignment.status === 'Submitted' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+    row.innerHTML = `
+      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${assignment.subject}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${assignment.assignment}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${assignment.dueDate}</td>
+      <td class="px-6 py-4 whitespace-nowrap">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">${assignment.status}</span>
+      </td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${assignment.grade}</td>
+    `;
+  });
+}
+
+function loadFeesData() {
+  const feesData = [
+    { type: 'Tuition Fee', amount: 500, dueDate: '2024-01-01', status: 'Paid', paymentDate: '2023-12-28' },
+    { type: 'Library Fee', amount: 50, dueDate: '2024-01-15', status: 'Pending', paymentDate: '-' },
+    { type: 'Sports Fee', amount: 100, dueDate: '2024-02-01', status: 'Pending', paymentDate: '-' }
+  ];
+  
+  const tbody = document.getElementById('feesTable');
+  tbody.innerHTML = '';
+  
+  let totalDue = 0;
+  let totalPaid = 0;
+  
+  feesData.forEach(fee => {
+    const row = tbody.insertRow();
+    const statusClass = fee.status === 'Paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+    row.innerHTML = `
+      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${fee.type}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$${fee.amount}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${fee.dueDate}</td>
+      <td class="px-6 py-4 whitespace-nowrap">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">${fee.status}</span>
+      </td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${fee.paymentDate}</td>
+    `;
+    
+    if (fee.status === 'Paid') {
+      totalPaid += fee.amount;
+    } else {
+      totalDue += fee.amount;
+    }
+  });
+  
+  document.getElementById('totalDue').textContent = `$${totalDue}`;
+  document.getElementById('totalPaid').textContent = `$${totalPaid}`;
+  document.getElementById('balance').textContent = `$${totalDue}`;
+}
+
+function loadScheduleData() {
+  const scheduleData = [
+    { time: '8:00-9:00', monday: 'Mathematics', tuesday: 'English', wednesday: 'Science', thursday: 'History', friday: 'Mathematics' },
+    { time: '9:00-10:00', monday: 'English', tuesday: 'Mathematics', wednesday: 'Mathematics', thursday: 'Science', friday: 'English' },
+    { time: '10:00-10:30', monday: 'Break', tuesday: 'Break', wednesday: 'Break', thursday: 'Break', friday: 'Break' },
+    { time: '10:30-11:30', monday: 'Science', tuesday: 'Science', wednesday: 'English', thursday: 'Mathematics', friday: 'Science' },
+    { time: '11:30-12:30', monday: 'History', tuesday: 'History', wednesday: 'History', thursday: 'English', friday: 'History' }
+  ];
+  
+  const tbody = document.getElementById('scheduleTable');
+  tbody.innerHTML = '';
+  
+  scheduleData.forEach(period => {
+    const row = tbody.insertRow();
+    row.innerHTML = `
+      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${period.time}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${period.monday}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${period.tuesday}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${period.wednesday}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${period.thursday}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${period.friday}</td>
+    `;
+  });
+}
+
+function loadMessagesData() {
+  const messagesData = [
+    { from: 'Ms. Johnson', subject: 'Math Assignment', message: 'Please ensure your child completes the algebra problems by Friday.', date: '2024-01-10' },
+    { from: 'Mr. Smith', subject: 'Science Project', message: 'Great work on the lab report! Keep it up.', date: '2024-01-08' }
+  ];
+  
+  const container = document.getElementById('messagesList');
+  container.innerHTML = '';
+  
+  messagesData.forEach(message => {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'bg-gray-50 rounded-lg p-4';
+    messageDiv.innerHTML = `
+      <h5 class="text-sm font-medium text-gray-900">${message.subject}</h5>
+      <p class="text-sm text-gray-600 mt-1">${message.message}</p>
+      <p class="text-xs text-gray-500 mt-2">From: ${message.from} - ${message.date}</p>
+    `;
+    container.appendChild(messageDiv);
+  });
+}
+
+function makePayment() {
+  alert('Payment functionality would be implemented here with a payment gateway integration.');
+}
+
+function printReport() {
+  window.print();
+}
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+  // If there's only one child, auto-select them
+  const children = document.querySelectorAll('.student-card');
+  if (children.length === 1) {
+    children[0].click();
+  }
+});
+</script>
+{% endblock %}

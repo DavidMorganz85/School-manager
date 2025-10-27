@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-4 max-w-3xl">
+  <h1 class="text-2xl font-semibold mb-4">Lesson Plans</h1>
+  <form method="post" enctype="multipart/form-data" class="space-y-4 mb-6">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div>
+      {{ form.title.label_tag }}
+      {{ form.title }}
+    </div>
+    <div>
+      {{ form.file.label_tag }}
+      {{ form.file }}
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        {{ form.subject.label_tag }}
+        {{ form.subject }}
+      </div>
+      <div>
+        {{ form.school_class.label_tag }}
+        {{ form.school_class }}
+      </div>
+    </div>
+    <div>
+      <button class="btn btn-primary">Upload</button>
+    </div>
+  </form>
+
+  <div class="space-y-4">
+    {% for p in plans %}
+      <div class="p-3 border rounded bg-white">
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="font-medium">{{ p.title }}</h3>
+            <p class="text-sm text-gray-600">{{ p.subject }} — {{ p.school_class }} — {{ p.uploaded_at }}</p>
+          </div>
+          <div>
+            {% if p.file %}<a href="{{ p.file.url }}" class="text-indigo-600">Download</a>{% endif %}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>No lesson plans uploaded yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

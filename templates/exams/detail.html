@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Exam Detail{% endblock %}
+{% block content %}
+<div class="card p-3">
+    <h4>{{ exam.name }}</h4>
+    <p>Class: {{ exam.school_class }}</p>
+    <p>Subject: {{ exam.subject }}</p>
+    <p>Date: {{ exam.date }}</p>
+    <h5>Marks</h5>
+    <table class="table table-sm">
+        <thead><tr><th>Student</th><th>Score</th></tr></thead>
+        <tbody>
+            {% for mark in exam.mark_set.all %}
+            <tr>
+                <td>{{ mark.student.user.get_full_name }}</td>
+                <td>{{ mark.score }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

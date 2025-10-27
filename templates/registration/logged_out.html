@@ -1,0 +1,8 @@
+{% extends 'school/base.html' %}
+
+{% block content %}
+  <div class="container" style="max-width:640px;margin-top:2rem;">
+    <h2>Logged out</h2>
+    <p>You have been logged out. <a href="{% url 'login' %}">Log in again</a>.</p>
+  </div>
+{% endblock %}

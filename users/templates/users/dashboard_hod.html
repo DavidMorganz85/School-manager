@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>HOD Dashboard: {{ hod.full_name }}</h2>
+<h3>Department: {{ department.name }}</h3>
+<h4>Teachers</h4>
+<ul>
+    {% for teacher in teachers %}
+    <li>{{ teacher.full_name }}</li>
+    {% endfor %}
+</ul>
+<h4>Subjects</h4>
+<ul>
+    {% for subject in subjects %}
+    <li>{{ subject.name }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

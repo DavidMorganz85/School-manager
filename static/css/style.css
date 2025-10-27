@@ -1,0 +1,18 @@
+body {
+    background-color: #f7f9fc;
+    font-family: 'Poppins', sans-serif;
+}
+.sidebar {
+    width: 250px;
+    background-color: #0d1b2a;
+    height: 100vh;
+    position: fixed;
+}
+.main-content {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+}
+.nav-link:hover {
+    background-color: #1b263b;
+    border-radius: 8px;
+}

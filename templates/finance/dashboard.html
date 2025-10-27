@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Finance Dashboard{% endblock %}
+{% block content %}
+<h3 class="fw-bold mb-4">Finance Overview</h3>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card p-3 text-center">
+            <h6>Total Payments</h6>
+            <h3 class="text-success fw-bold">${{ payments|length }}</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 text-center">
+            <h6>Invoices</h6>
+            <h3 class="text-warning fw-bold">{{ invoices|length }}</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 text-center">
+            <h6>Fee Structures</h6>
+            <h3 class="text-info fw-bold">{{ structures|length }}</h3>
+        </div>
+    </div>
+</div>
+<div class="card mt-4 p-3">
+    <h5>Recent Payments</h5>
+    <table class="table table-sm">
+        <thead><tr><th>Student</th><th>Amount</th><th>Date</th></tr></thead>
+        <tbody>
+            {% for payment in payments %}
+            <tr>
+                <td>{{ payment.student.user.get_full_name }}</td>
+                <td>${{ payment.amount }}</td>
+                <td>{{ payment.date_paid }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

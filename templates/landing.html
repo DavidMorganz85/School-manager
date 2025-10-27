@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Hero / Header -->
+<header class="bg-white">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="flex items-center justify-between py-6">
+      <div class="flex items-center space-x-4">
+        <!-- site logo: prefer uploaded school.logo, otherwise use static fallback atlas logo -->
+        <a href="/" class="logo-wrap">
+          {% if school.logo %}
+            <img src="{{ school.logo.url }}" alt="{{ school.name|default:'ATLAS' }}" class="logo-animate w-10 h-10 rounded" />
+          {% else %}
+            <img src="{% static 'images/atlas_logo.png' %}" alt="{{ school.name|default:'ATLAS' }}" class="logo-animate w-10 h-10 rounded" />
+          {% endif %}
+        </a>
+        <div>
+          <h1 class="text-xl font-bold">{{ school.name|default:'ATLAS' }}</h1>
+          <p class="text-sm text-gray-500">{{ school.tagline }}</p>
+        </div>
+      </div>
+      <nav class="hidden md:flex items-center space-x-6 text-sm">
+        <a href="#about" class="text-gray-600 hover:text-primary-600">About</a>
+        <a href="#features" class="text-gray-600 hover:text-primary-600">Features</a>
+        <a href="#pricing" class="text-gray-600 hover:text-primary-600">Plans</a>
+        <a href="#contact" class="text-gray-600 hover:text-primary-600">Contact</a>
+        <a href="/login/" class="px-4 py-2 border border-primary-500 text-primary-600 rounded-md">Login</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<section class="bg-gradient-to-r from-primary-500 to-cyan-400 decor-pattern">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8 py-20 lg:py-28 text-white">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+      <div>
+          <h2 class="text-4xl lg:text-5xl font-extrabold leading-tight fade-up">{{ school.tagline|default:'Modern School Management for Better Learning' }}</h2>
+          <p class="mt-6 text-lg text-white/90 fade-up">{{ school.about_text|default:'Manage students, teachers, classes, exams and more with ease.' }}</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+            <a href="/register/" class="inline-block px-6 py-3 bg-white text-primary-600 rounded-md font-semibold cta-pulse">Get Started</a>
+            <a href="/contact/" class="inline-block px-6 py-3 border border-white text-white rounded-md">Contact Sales</a>
+        </div>
+          <div class="mt-8 grid grid-cols-3 gap-4 text-white/90 reveal-stagger">
+            <div class="fade-up">
+              <div class="text-2xl font-bold stat-counter" data-to="150">0</div>
+              <div class="text-sm">Schools</div>
+            </div>
+            <div class="fade-up">
+              <div class="text-2xl font-bold stat-counter" data-to="20000">0</div>
+              <div class="text-sm">Students</div>
+            </div>
+            <div class="fade-up">
+              <div class="text-2xl font-bold stat-counter" data-to="500">0</div>
+              <div class="text-sm">Teachers</div>
+            </div>
+          </div>
+      </div>
+      <div class="relative">
+          {% if school.hero_image %}
+            <img src="{{ school.hero_image.url }}" alt="Campus" class="w-full rounded-xl shadow-xl hero-image-cover hero-tilt h-80 lg:h-[420px] object-cover">
+            <img src="{% static 'images/hero-decor.svg' %}" aria-hidden="true" class="hero-overlay-decor floating-decor hidden md:block svg-decor" style="position:absolute; right:-40px; top:-24px; width:220px;">
+            <img src="{% static 'images/pattern.svg' %}" aria-hidden="true" class="absolute inset-0 w-full h-full opacity-30 pointer-events-none hidden lg:block" style="object-fit:cover;">
+          {% else %}
+            <div class="w-full rounded-xl shadow-xl bg-white/10 h-80 lg:h-[420px]"></div>
+          {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features" class="py-16 bg-white">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <h3 class="text-3xl font-bold text-gray-800">Key Capabilities</h3>
+    <p class="mt-3 text-gray-600">Everything a modern school needs — academics, administration, finance and communication.</p>
+
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="p-6 bg-white rounded-lg border feature-card">
+        <div class="text-3xl">📚</div>
+        <h4 class="mt-4 font-semibold text-lg">Academic Management</h4>
+        <p class="mt-2 text-sm text-gray-500">Manage subjects, timetables, exams and marks in one place.</p>
+      </div>
+      <div class="p-6 bg-white rounded-lg border feature-card">
+        <div class="text-3xl">👩‍🏫</div>
+        <h4 class="mt-4 font-semibold text-lg">Teacher & Student Portals</h4>
+        <p class="mt-2 text-sm text-gray-500">Dedicated dashboards for staff and students to access resources and updates.</p>
+      </div>
+      <div class="p-6 bg-white rounded-lg border feature-card">
+        <div class="text-3xl">💬</div>
+        <h4 class="mt-4 font-semibold text-lg">Parent Communication</h4>
+        <p class="mt-2 text-sm text-gray-500">Keep parents informed with announcements, reports and messaging.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / Plans -->
+<section id="pricing" class="py-16 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <h3 class="text-3xl font-bold text-gray-800">Plans for Schools</h3>
+    <p class="mt-3 text-gray-600">Flexible plans for small and large institutions.</p>
+
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="p-6 bg-white rounded-lg border">
+        <h4 class="font-semibold">Starter</h4>
+        <div class="mt-4 text-3xl font-bold">Free</div>
+        <p class="mt-2 text-sm text-gray-500">Basic features to get started.</p>
+        <a href="/register/" class="mt-4 inline-block px-4 py-2 bg-primary-500 text-white rounded">Sign up</a>
+      </div>
+      <div class="p-6 bg-white rounded-lg border">
+        <h4 class="font-semibold">Growth</h4>
+        <div class="mt-4 text-3xl font-bold">$49/mo</div>
+        <p class="mt-2 text-sm text-gray-500">Advanced modules and priority support.</p>
+        <a href="/register/" class="mt-4 inline-block px-4 py-2 bg-primary-500 text-white rounded">Start free trial</a>
+      </div>
+      <div class="p-6 bg-white rounded-lg border">
+        <h4 class="font-semibold">Enterprise</h4>
+        <div class="mt-4 text-3xl font-bold">Contact Us</div>
+        <p class="mt-2 text-sm text-gray-500">Custom solutions and onboarding.</p>
+        <a href="/contact/" class="mt-4 inline-block px-4 py-2 border border-primary-500 text-primary-500 rounded">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer-dark py-12">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8 text-gray-300">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div>
+        <h5 class="font-semibold text-white">{{ school.name }}</h5>
+        <p class="mt-2 text-sm">{{ school.address }}</p>
+        <p class="mt-2 text-sm">Phone: {{ school.phone }}</p>
+        <p class="mt-2 text-sm">Email: {{ school.email }}</p>
+      </div>
+      <div>
+        <h5 class="font-semibold text-white">Quick Links</h5>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li><a href="#about" class="hover:text-white">About</a></li>
+          <li><a href="#features" class="hover:text-white">Features</a></li>
+          <li><a href="#pricing" class="hover:text-white">Plans</a></li>
+          <li><a href="/privacy/" class="hover:text-white">Privacy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5 class="font-semibold text-white">Follow Us</h5>
+        <div class="mt-3 flex items-center space-x-3">
+          {% if school.facebook %}<a href="{{ school.facebook }}" class="text-gray-300 hover:text-white"><i class="fab fa-facebook fa-lg"></i></a>{% endif %}
+          {% if school.twitter %}<a href="{{ school.twitter }}" class="text-gray-300 hover:text-white"><i class="fab fa-twitter fa-lg"></i></a>{% endif %}
+          {% if school.instagram %}<a href="{{ school.instagram }}" class="text-gray-300 hover:text-white"><i class="fab fa-instagram fa-lg"></i></a>{% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="mt-8 text-center text-sm text-gray-500">&copy; {{ school.name }} {{ now|date:"Y" }}. All rights reserved.</div>
+  </div>
+</footer>
+
+{% endblock %}

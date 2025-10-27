@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Headteacher / Principal Dashboard</h2>
+<div class="row mb-4">
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Total Departments</h6>
+        <h3>{{ total_departments }}</h3>
+        <a href="{% url 'department_add' %}" class="btn btn-primary btn-sm mt-2">Add New Department</a>
+      </div>
+    </div>
+  </div>
+  <!-- ...other summary cards... -->
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Departments Overview</h6>
+    <table class="table table-bordered table-sm">
+      <thead>
+        <tr><th>Name</th><th>Code</th><th>Head of Department</th><th># Teachers</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for dept in departments %}
+          <tr>
+            <td>{{ dept.name }}</td>
+            <td>{{ dept.code }}</td>
+            <td>{{ dept.head.user.get_full_name if dept.head else '-' }}</td>
+            <td>{{ dept.subjects.count }}</td>
+            <td>
+              <a href="{% url 'department_edit' dept.pk %}" class="btn btn-sm btn-outline-info">Edit</a>
+              <a href="{% url 'department_delete' dept.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5">No departments found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

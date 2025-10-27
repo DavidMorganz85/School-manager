@@ -1,0 +1,416 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Headteacher Dashboard - School Manager{% endblock %}
+
+{% block content %}
+<!-- Enhanced Top Navigation -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
+            <i class="fas fa-user-tie text-white"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold text-gray-900">Headteacher Dashboard</h1>
+            <p class="text-gray-600">Welcome back, {{ user.get_full_name }}!</p>
+          </div>
+  </div>
+</div>
+
+      <div class="mt-4 lg:mt-0 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+        <!-- Search Bar -->
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fas fa-search text-gray-400"></i>
+  </div>
+          <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500" placeholder="Search students, teachers, classes...">
+</div>
+
+        <!-- Notifications -->
+        <div class="relative">
+          <button class="relative p-2 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-md">
+            <i class="fas fa-bell text-xl"></i>
+            {% if notifications %}
+            <span class="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+              {{ notifications|length }}
+            </span>
+            {% endif %}
+          </button>
+</div>
+
+        <!-- User Profile -->
+        <div class="relative">
+          <button class="flex items-center space-x-2 p-2 text-gray-700 hover:bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+            {% if user.profile_photo %}
+              <img src="{{ user.profile_photo.url }}" alt="Profile" class="w-8 h-8 rounded-full">
+            {% else %}
+              <div class="w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center">
+                {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+              </div>
+            {% endif %}
+            <span class="hidden sm:block">{{ user.username }}</span>
+            <i class="fas fa-chevron-down text-xs"></i>
+          </button>
+        </div>
+  </div>
+</div>
+  </div>
+</div>
+
+<!-- Key Metrics Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-users text-white"></i>
+    </div>
+  </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Total Students</dt>
+            <dd class="text-3xl font-bold text-gray-900">{{ total_students }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-chalkboard-teacher text-white"></i>
+      </div>
+    </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Active Teachers</dt>
+            <dd class="text-3xl font-bold text-gray-900">{{ active_teachers }}</dd>
+          </dl>
+  </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-clipboard-check text-white"></i>
+      </div>
+    </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Attendance Rate</dt>
+            <dd class="text-3xl font-bold text-gray-900">{{ attendance_overview }}%</dd>
+          </dl>
+  </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white overflow-hidden shadow-sm border border-gray-200 rounded-lg">
+    <div class="p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
+            <i class="fas fa-dollar-sign text-white"></i>
+          </div>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">Fee Collection</dt>
+            <dd class="text-3xl font-bold text-gray-900">${{ fee_collection|floatformat:0 }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="bg-white shadow-sm border border-gray-200 rounded-lg mb-8">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <h3 class="text-lg font-medium text-gray-900">Quick Actions</h3>
+  </div>
+  <div class="p-6">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <button class="flex flex-col items-center p-4 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors duration-200">
+        <i class="fas fa-bullhorn text-primary-600 text-2xl mb-2"></i>
+        <span class="text-sm font-medium text-primary-900">Send Announcement</span>
+      </button>
+      <button class="flex flex-col items-center p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors duration-200">
+        <i class="fas fa-check-circle text-green-600 text-2xl mb-2"></i>
+        <span class="text-sm font-medium text-green-900">Approve Results</span>
+      </button>
+      <button class="flex flex-col items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200">
+        <i class="fas fa-chart-bar text-blue-600 text-2xl mb-2"></i>
+        <span class="text-sm font-medium text-blue-900">View Reports</span>
+      </button>
+      <button class="flex flex-col items-center p-4 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors duration-200">
+        <i class="fas fa-calendar-plus text-yellow-600 text-2xl mb-2"></i>
+        <span class="text-sm font-medium text-yellow-900">Schedule Event</span>
+      </button>
+      <button class="flex flex-col items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+        <i class="fas fa-file-export text-gray-600 text-2xl mb-2"></i>
+        <span class="text-sm font-medium text-gray-900">Export Data</span>
+      </button>
+      <button class="flex flex-col items-center p-4 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors duration-200">
+        <i class="fas fa-cog text-indigo-600 text-2xl mb-2"></i>
+        <span class="text-sm font-medium text-indigo-900">Settings</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Analytics Charts -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+  <div class="xl:col-span-2 bg-white shadow-sm border border-gray-200 rounded-lg">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">Attendance Trends (Last 30 Days)</h3>
+    </div>
+    <div class="p-6">
+      <div class="h-64">
+        <canvas id="attendanceChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white shadow-sm border border-gray-200 rounded-lg">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">Class Performance</h3>
+    </div>
+    <div class="p-6">
+      <div class="h-64">
+        <canvas id="performanceChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Student Analytics -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+  <div class="bg-white shadow-sm border border-gray-200 rounded-lg">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">Students Requiring Attention</h3>
+    </div>
+    <div class="p-6">
+      <div class="space-y-4">
+        {% for student in low_attendance_students|slice:":5" %}
+        <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-exclamation-triangle text-yellow-600"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-900">{{ student.user.get_full_name }}</p>
+              <p class="text-xs text-gray-500">{{ student.school_class }}</p>
+            </div>
+          </div>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+            Low Attendance
+          </span>
+        </div>
+        {% endfor %}
+        {% for student in failing_grades_students|slice:":5" %}
+        <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-times-circle text-red-600"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-900">{{ student.user.get_full_name }}</p>
+              <p class="text-xs text-gray-500">{{ student.school_class }}</p>
+            </div>
+          </div>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+            Failing Grades
+          </span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white shadow-sm border border-gray-200 rounded-lg">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">Top Performers</h3>
+    </div>
+    <div class="p-6">
+      <div class="space-y-4">
+        {% for student in top_performers_students|slice:":5" %}
+        <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-star text-green-600"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-900">{{ student.user.get_full_name }}</p>
+              <p class="text-xs text-gray-500">{{ student.school_class }}</p>
+            </div>
+          </div>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+            Excellent
+          </span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Activities -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+  <div class="bg-white shadow-sm border border-gray-200 rounded-lg">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">Recent Attendance</h3>
+    </div>
+    <div class="p-6">
+      <div class="space-y-3">
+        {% for attendance in recent_attendance %}
+        <div class="flex items-center justify-between py-2">
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 {% if attendance.present %}bg-green-100{% else %}bg-red-100{% endif %} rounded-full flex items-center justify-center">
+              <i class="fas {% if attendance.present %}fa-check{% else %}fa-times{% endif %} text-{% if attendance.present %}green-600{% else %}red-600{% endif %} text-sm"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-900">{{ attendance.student.user.get_full_name }}</p>
+              <p class="text-xs text-gray-500">{{ attendance.date }}</p>
+            </div>
+          </div>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if attendance.present %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+            {% if attendance.present %}Present{% else %}Absent{% endif %}
+          </span>
+        </div>
+        {% empty %}
+        <p class="text-center text-gray-500 py-4">No recent attendance records</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white shadow-sm border border-gray-200 rounded-lg">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">Recent Grades</h3>
+    </div>
+    <div class="p-6">
+      <div class="space-y-3">
+        {% for grade in recent_grades %}
+        <div class="flex items-center justify-between py-2">
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 {% if grade.score >= 85 %}bg-green-100{% elif grade.score >= 70 %}bg-yellow-100{% else %}bg-red-100{% endif %} rounded-full flex items-center justify-center">
+              <i class="fas fa-graduation-cap text-{% if grade.score >= 85 %}green-600{% elif grade.score >= 70 %}yellow-600{% else %}red-600{% endif %} text-sm"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-900">{{ grade.student.user.get_full_name }}</p>
+              <p class="text-xs text-gray-500">{{ grade.subject }}</p>
+            </div>
+          </div>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if grade.score >= 85 %}bg-green-100 text-green-800{% elif grade.score >= 70 %}bg-yellow-100 text-yellow-800{% else %}bg-red-100 text-red-800{% endif %}">
+            {{ grade.score }}
+          </span>
+        </div>
+        {% empty %}
+        <p class="text-center text-gray-500 py-4">No recent grades</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Notifications Panel -->
+<div class="bg-white shadow-sm border border-gray-200 rounded-lg">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <h3 class="text-lg font-medium text-gray-900">Recent Notifications</h3>
+  </div>
+  <div class="p-6">
+    <div class="space-y-4">
+      {% for notification in notifications %}
+      <div class="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+        <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+          <i class="fas fa-bell text-primary-600 text-sm"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-gray-900">{{ notification.title }}</p>
+          <p class="text-sm text-gray-600">{{ notification.message|truncatechars:100 }}</p>
+          <p class="text-xs text-gray-500 mt-1">{{ notification.created|timesince }} ago</p>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-center text-gray-500 py-4">No recent notifications</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Attendance Chart
+const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+const attendanceChart = new Chart(attendanceCtx, {
+  type: 'line',
+  data: {
+    labels: {{ attendance_chart_data|safe }},
+    datasets: [{
+      label: 'Attendance %',
+      data: {{ attendance_chart_data|safe }},
+      borderColor: 'rgb(59, 130, 246)',
+      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+      tension: 0.1,
+      fill: true
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100
+      }
+    },
+    plugins: {
+      legend: {
+        display: false
+      }
+    }
+  }
+});
+
+// Performance Chart
+const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+const performanceChart = new Chart(performanceCtx, {
+  type: 'doughnut',
+  data: {
+    labels: {{ performance_chart_data|safe }},
+    datasets: [{
+      data: {{ performance_chart_data|safe }},
+      backgroundColor: [
+        '#3b82f6',
+        '#10b981',
+        '#f59e0b',
+        '#ef4444',
+        '#8b5cf6'
+      ]
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom'
+      }
+    }
+  }
+});
+</script>
+{% endblock %}

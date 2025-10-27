@@ -1,0 +1,22 @@
+{% extends 'school/base.html' %}
+
+{% block title %}{{ student }} - Student{% endblock %}
+
+{% block content %}
+  <h2>{{ student }}</h2>
+  {% if student.photo %}
+    <p><img src="{{ student.photo.url }}" alt="{{ student }}" style="max-width:240px;"/></p>
+  {% endif %}
+  <p>Email: {{ student.email }}</p>
+  <p>Age: {{ student.age }}</p>
+  <p>Enrolled: {{ student.enrollment_date }}</p>
+  <h3>Courses</h3>
+  <ul>
+    {% for c in student.courses.all %}
+      <li>{{ c }}</li>
+    {% empty %}
+      <li>Not enrolled in any courses.</li>
+    {% endfor %}
+  </ul>
+  <p><a href="{% url 'school:index' %}">Back to list</a></p>
+{% endblock %}

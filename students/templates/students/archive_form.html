@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Archive Student: {{ student }}</h2>
+<form method="post">{% csrf_token %}
+    <label for="reason">Reason for Archiving:</label>
+    <input type="text" name="reason" id="reason" required>
+    <button type="submit">Archive</button>
+</form>
+{% endblock %}

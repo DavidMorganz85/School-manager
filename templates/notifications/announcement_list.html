@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Announcements{% endblock %}
+{% block content %}
+<h3 class="fw-bold mb-4">School Announcements</h3>
+<div class="card p-3">
+    <ul class="list-group">
+        {% for announcement in announcements %}
+        <li class="list-group-item">
+            <h5>{{ announcement.title }}</h5>
+            <p>{{ announcement.message }}</p>
+            <small class="text-muted">By {{ announcement.author.username }} on {{ announcement.created_at }}</small>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

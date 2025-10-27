@@ -1,0 +1,20 @@
+{% load static %}
+<aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-slate-900 text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300" role="navigation" aria-label="Main navigation">
+    <div class="h-16 flex items-center px-4 border-b border-slate-800">
+    <a href="/" class="flex items-center gap-3">
+      {% if school.logo %}
+        <img src="{{ school.logo.url }}" alt="{{ school.name|default:'ATLAS' }}" class="w-10 h-10 rounded"/>
+      {% else %}
+        <img src="{% static 'images/atlas_logo.png' %}" alt="ATLAS" class="w-10 h-10 rounded"/>
+      {% endif %}
+      <span class="font-bold">ATLAS</span>
+    </a>
+  </div>
+  <nav class="mt-6">
+    <a href="{% url 'school:dashboard' %}" class="block px-4 py-3 text-slate-300 hover:bg-slate-800">Dashboard</a>
+    <a href="{% url 'students:list' %}" class="block px-4 py-3 text-slate-300 hover:bg-slate-800">Students</a>
+    <a href="{% url 'teachers:list' %}" class="block px-4 py-3 text-slate-300 hover:bg-slate-800">Teachers</a>
+    <a href="{% url 'classes:department_list' %}" class="block px-4 py-3 text-slate-300 hover:bg-slate-800">Classes</a>
+    <a href="/finance/" class="block px-4 py-3 text-slate-300 hover:bg-slate-800">Finance</a>
+  </nav>
+</aside>

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-4 max-w-2xl">
+  <h1 class="text-2xl font-semibold mb-4">Create Assignment</h1>
+  <form method="post" enctype="multipart/form-data" class="space-y-4">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div>
+      {{ form.title.label_tag }}
+      {{ form.title }}
+      {{ form.title.errors }}
+    </div>
+    <div>
+      {{ form.description.label_tag }}
+      {{ form.description }}
+      {{ form.description.errors }}
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        {{ form.school_class.label_tag }}
+        {{ form.school_class }}
+        {{ form.school_class.errors }}
+      </div>
+      <div>
+        {{ form.subject.label_tag }}
+        {{ form.subject }}
+        {{ form.subject.errors }}
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        {{ form.total_marks.label_tag }}
+        {{ form.total_marks }}
+        {{ form.total_marks.errors }}
+      </div>
+      <div>
+        {{ form.due_date.label_tag }}
+        {{ form.due_date }}
+        {{ form.due_date.errors }}
+      </div>
+    </div>
+    <div>
+      {{ form.attachment.label_tag }}
+      {{ form.attachment }}
+      {{ form.attachment.errors }}
+    </div>
+    <div>
+      <button class="btn btn-primary">Create</button>
+      <a href="{% url 'teachers:assignments_list' %}" class="btn">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

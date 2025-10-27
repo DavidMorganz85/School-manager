@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Class Detail{% endblock %}
+{% block content %}
+<div class="card p-3">
+    <h4>{{ school_class.name }} - Section {{ school_class.section }}</h4>
+    <p>Subjects:</p>
+    <ul>
+        {% for subject in school_class.subject_set.all %}
+        <li>{{ subject.name }} ({{ subject.teacher.user.get_full_name }})</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

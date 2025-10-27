@@ -1,0 +1,13 @@
+{% extends 'school/base.html' %}
+
+{% block title %}Add course{% endblock %}
+
+{% block content %}
+  <h2>Add course</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+  </form>
+  <p><a href="{% url 'school:course_list' %}">Back</a></p>
+{% endblock %}

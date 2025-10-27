@@ -1,0 +1,30 @@
+<div class="sidebar p-3">
+    <h4 class="text-white mb-4 text-center">🏫 School Manager</h4>
+    <ul class="nav flex-column">
+        <li class="nav-item mb-2">
+            <a class="nav-link text-light" href="{% url 'dashboard' %}">
+                <i class="fa fa-home me-2"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item mb-2">
+            <a class="nav-link text-light" href="{% url 'students:list' %}">
+                <i class="fa fa-users me-2"></i> Students
+            </a>
+        </li>
+        <li class="nav-item mb-2">
+            <a class="nav-link text-light" href="{% url 'teachers:list' %}">
+                <i class="fa fa-chalkboard-teacher me-2"></i> Teachers
+            </a>
+        </li>
+        <li class="nav-item mb-2">
+            <a class="nav-link text-light" href="{% url 'finance:home' %}">
+                <i class="fa fa-money-bill me-2"></i> Finance
+            </a>
+        </li>
+        <li class="nav-item mb-2">
+            <a class="nav-link text-light" href="{% url 'library:home' %}">
+                <i class="fa fa-book-open me-2"></i> Library
+            </a>
+        </li>
+    </ul>
+</div>

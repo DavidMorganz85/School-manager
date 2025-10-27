@@ -1,0 +1,20 @@
+{% extends 'school/base.html' %}
+
+{% block content %}
+  <h2>Attendance Records</h2>
+  <a class="btn btn-primary mb-2" href="{% url 'school:attendance_create' %}">Record Attendance</a>
+  <table class="table table-striped">
+    <thead><tr><th>Date</th><th>Student</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for r in records %}
+        <tr>
+          <td>{{ r.date }}</td>
+          <td>{{ r.student }}</td>
+          <td>{{ 'Present' if r.present else 'Absent' }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="3">No records</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

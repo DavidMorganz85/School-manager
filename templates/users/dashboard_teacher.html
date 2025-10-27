@@ -1,0 +1,224 @@
+<!-- Profile Section -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Profile</h6>
+    <div class="row">
+      <div class="col-md-2 text-center">
+        <img src="{{ profile.photo.url }}" alt="Profile Photo" class="rounded-circle mb-2" width="80" height="80">
+      </div>
+      <div class="col-md-10">
+        <strong>Name:</strong> {{ user.get_full_name }}<br>
+        <strong>Employee ID:</strong> {{ user.id }}<br>
+        <strong>Department:</strong> {{ profile.bio|default:"-" }}<br>
+        <strong>Contact:</strong> {{ user.email }}<br>
+        <strong>Subjects Assigned:</strong>
+        <ul>
+          {% for subject in profile.subjects.all %}
+            <li>{{ subject.name }}</li>
+          {% empty %}
+            <li>No subjects assigned.</li>
+          {% endfor %}
+        </ul>
+        <a href="#" class="btn btn-outline-primary btn-sm mt-2">Edit Profile</a>
+        <a href="#" class="btn btn-outline-secondary btn-sm mt-2">Change Password</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Class & Student Management -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Classes & Students</h6>
+    <ul>
+      {% for class_id in classes %}
+        <li>
+          Class: {{ class_id }}
+          <ul>
+            {% for student in students %}
+              {% if student.school_class.id == class_id %}
+                <li>{{ student.user.get_full_name }} (Attendance: {{ student.attendance_set.count }}, Marks: {{ student.grade_set.count }})
+                  <a href="#" class="btn btn-sm btn-outline-success">Update Attendance</a>
+                  <a href="#" class="btn btn-sm btn-outline-info">Send Message</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </li>
+      {% empty %}
+        <li>No classes assigned.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<!-- Attendance Section -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Attendance</h6>
+    <ul>
+      {% for record in attendance_records %}
+        <li>{{ record.student.user.get_full_name }} - {{ record.date }} - {{ record.subject }} - {% if record.present %}Present{% else %}Absent{% endif %}</li>
+      {% empty %}
+        <li>No attendance records.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<!-- Academic Results Section -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Academic Results</h6>
+    <ul>
+      {% for grade in grades %}
+        <li>{{ grade.student.user.get_full_name }} - {{ grade.subject }} - {{ grade.score }} ({{ grade.term }} {{ grade.year }})</li>
+      {% empty %}
+        <li>No grades entered.</li>
+      {% endfor %}
+    </ul>
+    <a href="#" class="btn btn-outline-primary btn-sm mt-2">Generate Report Cards</a>
+  </div>
+</div>
+
+<!-- Timetable Section -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Timetable</h6>
+    <table class="table table-bordered table-sm">
+      <thead>
+        <tr><th>Day</th><th>Period</th><th>Subject</th><th>Class</th></tr>
+      </thead>
+      <tbody>
+        {% for entry in timetables %}
+          <tr>
+            <td>{{ entry.day }}</td>
+            <td>{{ entry.period }}</td>
+            <td>{{ entry.subject.name }}</td>
+            <td>{{ entry.school_class }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">No timetable available.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Notifications / Messages Section -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Notifications & Messages</h6>
+    <ul>
+      {% for note in notifications %}
+        <li>{{ note.message }} <span class="text-muted">{{ note.date }}</span></li>
+      {% empty %}
+        <li>No notifications or messages.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<!-- Resources / Library Section -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Resources / Library</h6>
+    <ul>
+      <li>Upload teaching materials (feature placeholder)</li>
+      <li>Access shared resources from school library (feature placeholder)</li>
+      <li>Track books borrowed by students (feature placeholder)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- UX Features: Responsive & Quick Actions -->
+<style>
+  @media (max-width: 768px) {
+    .sidebar { width: 100px; }
+    .content { margin-left: 100px; padding: 10px; }
+    .card { margin-bottom: 16px; }
+    .navbar-brand, .dropdown-toggle { font-size: 1rem; }
+    .table th, .table td { font-size: 0.9rem; }
+  }
+</style>
+{% extends 'base.html' %}
+{% block content %}
+<!-- Topbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white mb-4 rounded shadow-sm">
+  <div class="container-fluid">
+    <span class="navbar-brand">Welcome, {{ user.first_name }}!</span>
+    <form class="d-flex">
+      <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search">
+    </form>
+    <div class="dropdown">
+      <a class="btn btn-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+        <img src="{{ user.profile_photo.url }}" alt="Profile" class="rounded-circle" width="32" height="32">
+        {{ user.username }}
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="#">Settings</a></li>
+        <li><a class="dropdown-item" href="#">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Quick Metrics Cards -->
+<div class="row mb-4">
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Total Classes</h6>
+        <h3>{{ total_classes }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Total Subjects</h6>
+        <h3>{{ total_subjects }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Total Students</h6>
+        <h3>{{ total_students }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Pending Marks</h6>
+        <h3>{{ pending_marks }}</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="mb-4 d-flex flex-wrap gap-2">
+  <a href="#" class="btn btn-primary"><i class="fa fa-check"></i> Mark Attendance</a>
+  <a href="#" class="btn btn-success"><i class="fa fa-pen"></i> Enter Marks</a>
+  <a href="#" class="btn btn-warning"><i class="fa fa-bullhorn"></i> Send Announcement</a>
+</div>
+
+<!-- Recent Notifications -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Recent Announcements</h6>
+    <ul>
+      {% for note in notifications %}
+        <li>{{ note.message }} <span class="text-muted">{{ note.date }}</span></li>
+      {% empty %}
+        <li>No announcements.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<!-- Responsive layout and additional sections can be added below -->
+{% endblock %}

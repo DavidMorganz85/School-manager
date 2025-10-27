@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Classes{% endblock %}
+{% block content %}
+<h3 class="fw-bold mb-4">Class List</h3>
+<div class="card p-3">
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Section</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for school_class in classes %}
+            <tr>
+                <td>{{ school_class.name }}</td>
+                <td>{{ school_class.section }}</td>
+                <td>
+                    <a href="{% url 'classes:detail' school_class.pk %}" class="btn btn-sm btn-primary">View</a>
+                    <a href="{% url 'classes:edit' school_class.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{% url 'classes:delete' school_class.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

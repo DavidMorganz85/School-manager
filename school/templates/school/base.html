@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Skolnet{% endblock %}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <header>
+      <h1><a href="{% url 'school:index' %}">Skolnet</a></h1>
+      <nav>
+        <a href="{% url 'school:index' %}">Students</a> |
+        <a href="{% url 'school:student_create' %}">Add student</a> |
+        <a href="{% url 'school:teacher_list' %}">Teachers</a> |
+        <a href="{% url 'school:course_list' %}">Courses</a>
+      </nav>
+    </header>
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>

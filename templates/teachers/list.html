@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Teachers{% endblock %}
+{% block content %}
+<h3 class="fw-bold mb-4">Teacher List</h3>
+<div class="card p-3">
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Subjects</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for teacher in teachers %}
+            <tr>
+                <td><img src="{{ teacher.photo.url }}" alt="Photo" width="40" class="rounded-circle"></td>
+                <td>{{ teacher.user.get_full_name }}</td>
+                <td>{% for subject in teacher.subjects.all %}{{ subject.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                <td>
+                    <a href="{% url 'teachers:detail' teacher.pk %}" class="btn btn-sm btn-primary">View</a>
+                    <a href="{% url 'teachers:edit' teacher.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{% url 'teachers:delete' teacher.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

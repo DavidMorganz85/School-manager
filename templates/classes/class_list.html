@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+  <div class="flex justify-between items-center mb-4">
+    <h1 class="text-2xl font-semibold">Classes</h1>
+    <a href="{% url 'classes:class_create' %}" class="btn btn-primary">New Class</a>
+  </div>
+
+  <table class="min-w-full bg-white">
+    <thead>
+      <tr>
+        <th class="px-4 py-2">Name</th>
+        <th class="px-4 py-2">Level</th>
+        <th class="px-4 py-2">Section</th>
+        <th class="px-4 py-2">Teacher</th>
+        <th class="px-4 py-2">Students</th>
+        <th class="px-4 py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in classes %}
+      <tr class="border-t">
+        <td class="px-4 py-2"><a href="{% url 'classes:class_detail' c.id %}">{{ c.name }}</a></td>
+        <td class="px-4 py-2">{{ c.level }}</td>
+        <td class="px-4 py-2">{{ c.section }}</td>
+        <td class="px-4 py-2">{{ c.class_teacher }}</td>
+        <td class="px-4 py-2">{{ c.current_student_count }}</td>
+        <td class="px-4 py-2">
+          <a href="{% url 'classes:class_edit' c.id %}" class="text-indigo-600 mr-2">Edit</a>
+          <a href="{% url 'classes:class_delete' c.id %}" class="text-red-600">Delete</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

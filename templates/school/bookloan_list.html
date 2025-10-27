@@ -1,0 +1,29 @@
+{% extends 'school/base.html' %}
+
+{% block content %}
+  <h2>Book Loans</h2>
+  <a class="btn btn-primary mb-2" href="{% url 'school:bookloan_create' %}">Checkout Book</a>
+  <table class="table table-striped">
+    <thead><tr><th>Book</th><th>Student</th><th>Checkout</th><th>Due</th><th>Returned</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for l in loans %}
+        <tr>
+          <td>{{ l.book.title }}</td>
+          <td>{{ l.student }}</td>
+          <td>{{ l.checkout_date }}</td>
+          <td>{{ l.due_date }}</td>
+          <td>{{ l.returned }}</td>
+          <td>
+            {% if not l.returned %}
+              <a class="btn btn-sm btn-success" href="{% url 'school:bookloan_return' l.pk %}">Return</a>
+            {% else %}
+              —
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5">No loans</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-4 max-w-2xl">
+  <h1 class="text-2xl font-semibold mb-4">{{ action }} Department</h1>
+  <form method="post" class="space-y-4">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div>
+      {{ form.name.label_tag }}
+      {{ form.name }}
+      {{ form.name.errors }}
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        {{ form.code.label_tag }}
+        {{ form.code }}
+      </div>
+      <div>
+        {{ form.head.label_tag }}
+        {{ form.head }}
+      </div>
+    </div>
+    <div>
+      {{ form.description.label_tag }}
+      {{ form.description }}
+    </div>
+    <div>
+      {{ form.subjects.label_tag }}
+      {{ form.subjects }}
+    </div>
+    <div class="flex gap-2">
+      <button class="btn btn-primary">Save</button>
+      <a href="{% url 'classes:department_list' %}" class="btn">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h3>{% if edit %}Edit Department{% else %}Add Department{% endif %}</h3>
+<form method="post">
+  {% csrf_token %}
+  <div class="mb-3">
+    {{ form.name.label_tag }}
+    {{ form.name }}
+  </div>
+  <div class="mb-3">
+    {{ form.code.label_tag }}
+    {{ form.code }}
+  </div>
+  <div class="mb-3">
+    {{ form.head.label_tag }}
+    {{ form.head }}
+  </div>
+  <div class="mb-3">
+    {{ form.description.label_tag }}
+    {{ form.description }}
+  </div>
+  <div class="mb-3">
+    {{ form.template.label_tag }}
+    {{ form.template }}
+  </div>
+  <div class="mb-3">
+    {{ form.template_name.label_tag }}
+    {{ form.template_name }}
+  </div>
+  <div class="mb-3">
+    {{ form.parent.label_tag }}
+    {{ form.parent }}
+  </div>
+  <div class="mb-3">
+    {{ form.auto_populate }} {{ form.auto_populate.label_tag }}
+  </div>
+  <div class="mb-3">
+    <label>Assign Subjects</label>
+    {{ subject_form.subjects }}
+    <small class="form-text text-muted">Add or remove subjects as needed.</small>
+  </div>
+  <button type="submit" class="btn btn-primary">Save Department</button>
+</form>
+{% endblock %}

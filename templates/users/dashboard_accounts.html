@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Topbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white mb-4 rounded shadow-sm">
+  <div class="container-fluid">
+    <span class="navbar-brand">Welcome, {{ user.get_full_name }}!</span>
+    <form class="d-flex">
+      <input class="form-control me-2" type="search" placeholder="Search student, class, or ID..." aria-label="Search">
+    </form>
+    <div class="dropdown">
+      <a class="btn btn-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+        <img src="{{ user.profile_photo.url }}" alt="Profile" class="rounded-circle" width="32" height="32">
+        {{ user.username }}
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="#">Settings</a></li>
+        <li><a class="dropdown-item" href="#">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+  <div class="col-md-2">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Total Fees Collected</h6>
+        <h3>{{ total_fees_collected }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Pending Fees</h6>
+        <h3>{{ pending_fees }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Total Students</h6>
+        <h3>{{ total_students }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Recent Transactions</h6>
+        <h3>{{ recent_transactions }}</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="mb-4 d-flex flex-wrap gap-2">
+  <a href="#" class="btn btn-primary"><i class="fa fa-search"></i> Search Student</a>
+  <a href="#" class="btn btn-success"><i class="fa fa-credit-card"></i> Record Payment</a>
+  <a href="#" class="btn btn-info"><i class="fa fa-file-invoice"></i> Generate Invoice</a>
+  <a href="#" class="btn btn-warning"><i class="fa fa-file-alt"></i> Export Report</a>
+</div>
+
+<!-- Charts -->
+<div class="row mb-4">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h6>Monthly Fee Collection Trends</h6>
+        <canvas id="feeCollectionChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h6>Pending vs Collected Fees</h6>
+        <canvas id="pendingCollectedChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const feeCollectionLabels = {{ fee_collection_labels|safe }};
+  const feeCollectionData = {{ fee_collection_data|safe }};
+  const feeCollectionCtx = document.getElementById('feeCollectionChart').getContext('2d');
+  new Chart(feeCollectionCtx, {
+    type: 'line',
+    data: {
+      labels: feeCollectionLabels,
+      datasets: [{
+        label: 'Fees Collected',
+        data: feeCollectionData,
+        borderColor: 'rgba(0, 123, 255, 0.7)',
+        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+        tension: 0.3,
+        fill: true,
+        pointRadius: 4,
+        pointBackgroundColor: 'rgba(0, 123, 255, 1)',
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+  });
+
+  const pendingCollectedLabels = ['Pending', 'Collected'];
+  const pendingCollectedData = [{{ pending_fees }}, {{ total_fees_collected }}];
+  const pendingCollectedCtx = document.getElementById('pendingCollectedChart').getContext('2d');
+  new Chart(pendingCollectedCtx, {
+    type: 'doughnut',
+    data: {
+      labels: pendingCollectedLabels,
+      datasets: [{
+        data: pendingCollectedData,
+        backgroundColor: ['#ffc107', '#0d6efd'],
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { display: true } } }
+  });
+</script>
+
+<!-- Student Fee Management -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Student Fee Management</h6>
+    <form class="mb-3">
+      <div class="input-group">
+        <input type="text" name="student_search" class="form-control" placeholder="Search student by name, class, or ID...">
+        <button type="submit" class="btn btn-primary">Search</button>
+      </div>
+    </form>
+    <table class="table table-bordered table-sm">
+      <thead>
+        <tr><th>Name</th><th>Class</th><th>Fee Balance</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for s in students %}
+          <tr>
+            <td>{{ s.name }}</td>
+            <td>{{ s.class }}</td>
+            <td>{{ s.fee_balance }}</td>
+            <td>
+              <a href="#" class="btn btn-sm btn-outline-success">Record Payment</a>
+              <a href="#" class="btn btn-sm btn-outline-info">View History</a>
+              <a href="#" class="btn btn-sm btn-outline-warning">Generate Invoice</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">No students found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Reports -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Fee Reports</h6>
+    <table class="table table-bordered table-sm">
+      <thead>
+        <tr><th>Term/Class</th><th>Collected</th><th>Outstanding</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for r in reports %}
+          <tr>
+            <td>{{ r.term_class }}</td>
+            <td>{{ r.collected }}</td>
+            <td>{{ r.outstanding }}</td>
+            <td>
+              <a href="#" class="btn btn-sm btn-outline-info">Export PDF</a>
+              <a href="#" class="btn btn-sm btn-outline-success">Export Excel</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">No reports found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Notifications -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Notifications</h6>
+    <ul>
+      {% for n in notifications %}
+        <li>{{ n.message }} <span class="text-muted">{{ n.sent_at }}</span></li>
+      {% empty %}
+        <li>No notifications.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

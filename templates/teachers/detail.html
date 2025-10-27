@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Teacher Profile{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card p-3 text-center">
+            <img src="{{ teacher.photo.url }}" alt="Photo" width="120" class="rounded-circle mb-3">
+            <h4>{{ teacher.user.get_full_name }}</h4>
+            <p>Subjects: {% for subject in teacher.subjects.all %}{{ subject.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+            <p>{{ teacher.bio }}</p>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card p-3">
+            <h5>Timetable</h5>
+            <table class="table table-sm">
+                <thead><tr><th>Day</th><th>Period</th><th>Subject</th><th>Class</th></tr></thead>
+                <tbody>
+                    {% for entry in teacher.timetable_set.all %}
+                    <tr>
+                        <td>{{ entry.day }}</td>
+                        <td>{{ entry.period }}</td>
+                        <td>{{ entry.subject.name }}</td>
+                        <td>{{ entry.school_class }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

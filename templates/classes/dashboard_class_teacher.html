@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Topbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white mb-4 rounded shadow-sm">
+  <div class="container-fluid">
+    <span class="navbar-brand">Welcome, {{ user.first_name }}! | Class: {{ class_info }}</span>
+    <form class="d-flex">
+      <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search">
+    </form>
+    <div class="dropdown">
+      <a class="btn btn-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+        <img src="{{ user.profile_photo.url }}" alt="Profile" class="rounded-circle" width="32" height="32">
+        {{ user.username }}
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="#">Settings</a></li>
+        <li><a class="dropdown-item" href="#">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Quick Metrics Cards -->
+<div class="row mb-4">
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Total Students</h6>
+        <h3>{{ total_students }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Average Attendance %</h6>
+        <h3>{{ avg_attendance }}%</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Pending Marks/Reports</h6>
+        <h3>{{ pending_marks }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h6>Upcoming Exams/Events</h6>
+        <h3>{{ upcoming_events }}</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="mb-4 d-flex flex-wrap gap-2">
+  <a href="#" class="btn btn-primary"><i class="fa fa-check"></i> Mark Attendance</a>
+  <a href="#" class="btn btn-success"><i class="fa fa-pen"></i> Enter Marks</a>
+  <a href="#" class="btn btn-warning"><i class="fa fa-bullhorn"></i> Send Announcement</a>
+</div>
+
+<!-- Announcements -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Recent Announcements</h6>
+    <ul>
+      {% for note in announcements %}
+        <li>{{ note.message }} <span class="text-muted">{{ note.date }}</span></li>
+      {% empty %}
+        <li>No announcements.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<!-- Class Roster / Students -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Class Roster</h6>
+    <table class="table table-bordered table-sm">
+      <thead>
+        <tr><th>Photo</th><th>Name</th><th>Parent</th><th>Attendance</th><th>Marks</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+          <tr {% if student.attendance_alert %}class="table-warning"{% endif %}>
+            <td><img src="{{ student.photo.url }}" width="40" class="rounded-circle"></td>
+            <td>{{ student.user.get_full_name }}</td>
+            <td>{{ student.parent.get_full_name }}</td>
+            <td>{{ student.attendance_percent }}%</td>
+            <td>{{ student.latest_marks }}</td>
+            <td>
+              <a href="#" class="btn btn-sm btn-outline-info">View</a>
+              <a href="#" class="btn btn-sm btn-outline-success">Message</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6">No students found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Attendance Section -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Attendance</h6>
+    <canvas id="attendanceChart"></canvas>
+    <ul>
+      {% for alert in attendance_alerts %}
+        <li class="text-danger">{{ alert }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<!-- Academic Tracking -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Academic Tracking</h6>
+    <canvas id="performanceChart"></canvas>
+    <ul>
+      {% for risk in academic_risks %}
+        <li class="text-danger">{{ risk }}</li>
+      {% endfor %}
+    </ul>
+    <a href="#" class="btn btn-outline-primary btn-sm mt-2">Generate Class Report Cards</a>
+  </div>
+</div>
+
+<!-- Timetable & Class Schedule -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Timetable & Class Schedule</h6>
+    <table class="table table-bordered table-sm">
+      <thead>
+        <tr><th>Day</th><th>Period</th><th>Subject</th><th>Activity</th></tr>
+      </thead>
+      <tbody>
+        {% for entry in timetable %}
+          <tr>
+            <td>{{ entry.day }}</td>
+            <td>{{ entry.period }}</td>
+            <td>{{ entry.subject.name }}</td>
+            <td>{{ entry.activity }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">No timetable available.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Reports -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h6>Reports</h6>
+    <a href="#" class="btn btn-outline-secondary btn-sm">Export PDF</a>
+    <a href="#" class="btn btn-outline-secondary btn-sm">Export Excel</a>
+    <ul>
+      <li>Class performance summary</li>
+      <li>Attendance summary</li>
+      <li>Behavioral reports</li>
+      <li>Comparison with previous terms</li>
+    </ul>
+  </div>
+</div>
+
+<!-- UX Features: Responsive & Quick Actions -->
+<style>
+  @media (max-width: 768px) {
+    .sidebar { width: 100px; }
+    .content { margin-left: 100px; padding: 10px; }
+    .card { margin-bottom: 16px; }
+    .navbar-brand, .dropdown-toggle { font-size: 1rem; }
+    .table th, .table td { font-size: 0.9rem; }
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Student Profile{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card p-3 text-center">
+            <img src="{{ student.photo.url }}" alt="Photo" width="120" class="rounded-circle mb-3">
+            <h4>{{ student.user.get_full_name }}</h4>
+            <p>Class: {{ student.school_class }}</p>
+            <p>Parent: {{ student.parent.get_full_name }}</p>
+            <p>DOB: {{ student.date_of_birth }}</p>
+            <p>Address: {{ student.address }}</p>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card p-3 mb-3">
+            <h5>Attendance</h5>
+            <table class="table table-sm">
+                <thead><tr><th>Date</th><th>Subject</th><th>Present</th></tr></thead>
+                <tbody>
+                    {% for record in student.attendance_set.all %}
+                    <tr>
+                        <td>{{ record.date }}</td>
+                        <td>{{ record.subject }}</td>
+                        <td>{{ record.present|yesno:"✔,✖" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card p-3">
+            <h5>Grades</h5>
+            <table class="table table-sm">
+                <thead><tr><th>Subject</th><th>Score</th><th>Term</th><th>Year</th></tr></thead>
+                <tbody>
+                    {% for grade in student.grade_set.all %}
+                    <tr>
+                        <td>{{ grade.subject }}</td>
+                        <td>{{ grade.score }}</td>
+                        <td>{{ grade.term }}</td>
+                        <td>{{ grade.year }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
